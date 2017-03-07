@@ -1,0 +1,443 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skbold.preproc.label_preproc &mdash; skbold 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="skbold 0.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> skbold
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README_link.html">skbold - utilities and tools for machine learning on BOLD-fMRI data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/skbold.html">skbold package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">skbold</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>skbold.preproc.label_preproc</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for skbold.preproc.label_preproc</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Classes preprocess labels (&#39;y&#39;).</span>
+
+<span class="c1"># Author: Lukas Snoek [lukassnoek.github.io]</span>
+<span class="c1"># Contact: lukassnoek@gmail.com</span>
+<span class="c1"># License: 3 clause BSD</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="k">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stat</span>
+
+
+<div class="viewcode-block" id="LabelFactorizer"><a class="viewcode-back" href="../../../source/skbold.preproc.label_preproc.html#skbold.preproc.LabelFactorizer">[docs]</a><span class="k">class</span> <span class="nc">LabelFactorizer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Transforms labels according to a given factorial grouping.</span>
+
+<span class="sd">    Factorizes/encodes labels based on part of the string label. For example,</span>
+<span class="sd">    the label-vector [&#39;A_1&#39;, &#39;A_2&#39;, &#39;B_1&#39;, &#39;B_2&#39;] can be grouped</span>
+<span class="sd">    based on letter (A/B) or number (1/2).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grouping : List of str</span>
+<span class="sd">        List with identifiers for condition names as strings</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    new_labels_ : list</span>
+<span class="sd">        List with new labels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grouping</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">grouping</span> <span class="o">=</span> <span class="n">grouping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_labels_</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="LabelFactorizer.fit"><a class="viewcode-back" href="../../../source/skbold.preproc.label_preproc.html#skbold.preproc.LabelFactorizer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Does nothing, but included to be used in sklearn&#39;s Pipeline. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="LabelFactorizer.transform"><a class="viewcode-back" href="../../../source/skbold.preproc.label_preproc.html#skbold.preproc.LabelFactorizer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Transforms label-vector given a grouping.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        y : List/ndarray of str</span>
+<span class="sd">            List of ndarray with strings indicating label-names</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Numeric (float) array of shape = [n_samples, n_features]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        y_new : ndarray</span>
+<span class="sd">            array with transformed y-labels</span>
+<span class="sd">        X_new : ndarray</span>
+<span class="sd">            array with transformed data of shape = [n_samples, n_features]</span>
+<span class="sd">            given new factorial grouping/design.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">y_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">))</span><span class="o">*-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_labels_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;parsing error!&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+
+        <span class="n">all_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grouping</span><span class="p">):</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">g</span> <span class="ow">in</span> <span class="n">label</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">y</span><span class="p">])</span>
+            <span class="n">y_new</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">new_labels_</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span>
+            <span class="n">all_idx</span> <span class="o">+=</span> <span class="n">idx</span>
+
+        <span class="c1"># Index new labels, y, and X with new factorial labels</span>
+        <span class="n">all_idx</span> <span class="o">=</span> <span class="n">all_idx</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">y_new</span> <span class="o">=</span> <span class="n">y_new</span><span class="p">[</span><span class="n">all_idx</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_labels_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_labels_</span><span class="p">[</span><span class="n">all_idx</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">X</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">all_idx</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="k">return</span> <span class="n">y_new</span><span class="p">,</span> <span class="n">X_new</span>
+
+        <span class="k">return</span> <span class="n">y_new</span></div>
+
+<div class="viewcode-block" id="LabelFactorizer.get_new_labels"><a class="viewcode-back" href="../../../source/skbold.preproc.label_preproc.html#skbold.preproc.LabelFactorizer.get_new_labels">[docs]</a>    <span class="k">def</span> <span class="nf">get_new_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns new labels based on factorization. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_labels_</span></div></div>
+
+
+<div class="viewcode-block" id="MajorityUndersampler"><a class="viewcode-back" href="../../../source/skbold.preproc.label_preproc.html#skbold.preproc.MajorityUndersampler">[docs]</a><span class="k">class</span> <span class="nc">MajorityUndersampler</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Undersamples the majority-class(es) by selecting random samples.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Whether to print downsamples number of samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initializes MajorityUndersampler object. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="MajorityUndersampler.fit"><a class="viewcode-back" href="../../../source/skbold.preproc.label_preproc.html#skbold.preproc.MajorityUndersampler.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Does nothing, but included for scikit-learn pipelines. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="MajorityUndersampler.transform"><a class="viewcode-back" href="../../../source/skbold.preproc.label_preproc.html#skbold.preproc.MajorityUndersampler.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Downsamples majority-class(es).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Numeric (float) array of shape = [n_samples, n_features]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Transformed array of shape = [n_samples, n_features] given the</span>
+<span class="sd">            indices calculated during fit().</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">)):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Converting y to integer&#39;</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">all_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">bins</span><span class="p">):</span>
+                <span class="n">y_idx</span> <span class="o">=</span> <span class="n">y</span> <span class="o">==</span> <span class="n">i</span>
+                <span class="n">tmp_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">y_idx</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+                <span class="n">idx_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">y_idx</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+                                           <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">bins</span><span class="p">),</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">tmp_idx</span><span class="p">[</span><span class="n">idx_idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">all_idx</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp_idx</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">all_idx</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">X_ds</span><span class="p">,</span> <span class="n">y_ds</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">all_idx</span><span class="p">,</span> <span class="p">:],</span> <span class="n">y</span><span class="p">[</span><span class="n">all_idx</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of samples (after resampling): </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">y_ds</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Resampled class proportion: </span><span class="si">%.3f</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">y_ds</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span> <span class="o">=</span> <span class="n">all_idx</span>
+
+        <span class="k">return</span> <span class="n">X</span><span class="p">[</span><span class="n">all_idx</span><span class="p">,</span> <span class="p">:],</span> <span class="n">y</span><span class="p">[</span><span class="n">all_idx</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="LabelBinarizer"><a class="viewcode-back" href="../../../source/skbold.preproc.label_preproc.html#skbold.preproc.LabelBinarizer">[docs]</a><span class="k">class</span> <span class="nc">LabelBinarizer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initializes LabelBinarizer object. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binarize_params</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="LabelBinarizer.fit"><a class="viewcode-back" href="../../../source/skbold.preproc.label_preproc.html#skbold.preproc.LabelBinarizer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Does nothing, but included for scikit-learn pipelines. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="LabelBinarizer.transform"><a class="viewcode-back" href="../../../source/skbold.preproc.label_preproc.html#skbold.preproc.LabelBinarizer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Binarizes y-attribute.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Numeric (float) array of shape = [n_samples, n_features]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Transformed array of shape = [n_samples, n_features] given the</span>
+<span class="sd">            indices calculated during fit().</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;percentile&#39;</span><span class="p">,</span> <span class="s1">&#39;zscore&#39;</span><span class="p">,</span> <span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;median&#39;</span><span class="p">]</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span>
+
+        <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;percentile&#39;</span><span class="p">:</span>
+            <span class="n">y_rank</span> <span class="o">=</span> <span class="p">[</span><span class="n">stat</span><span class="o">.</span><span class="n">percentileofscore</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="s1">&#39;rank&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">y</span><span class="p">]</span>
+            <span class="n">y_rank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_rank</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_rank</span> <span class="o">&lt;</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;low&#39;</span><span class="p">])</span> <span class="o">|</span> <span class="p">(</span><span class="n">y_rank</span> <span class="o">&gt;</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;high&#39;</span><span class="p">])</span>
+            <span class="n">low</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">scoreatpercentile</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;low&#39;</span><span class="p">])</span>
+            <span class="n">high</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">scoreatpercentile</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;high&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">binarize_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;percentile&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;low&#39;</span><span class="p">:</span> <span class="n">low</span><span class="p">,</span>
+                                    <span class="s1">&#39;high&#39;</span><span class="p">:</span> <span class="n">high</span><span class="p">}</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_rank</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;zscore&#39;</span><span class="p">:</span>
+            <span class="n">y_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">y</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>  <span class="c1"># just to be sure</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_norm</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;std&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">binarize_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span>
+                                    <span class="s1">&#39;mean&#39;</span><span class="p">:</span> <span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+                                    <span class="s1">&#39;std&#39;</span><span class="p">:</span> <span class="n">y</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span>
+                                    <span class="s1">&#39;n_std&#39;</span><span class="p">:</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;std&#39;</span><span class="p">]}</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_norm</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;constant&#39;</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;cutoff&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">binarize_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span>
+                                    <span class="s1">&#39;cutoff&#39;</span><span class="p">:</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;cutoff&#39;</span><span class="p">]}</span>
+        <span class="k">elif</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;median&#39;</span><span class="p">:</span>  <span class="c1"># median-split</span>
+            <span class="n">median</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="n">median</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">binarize_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span>
+                                    <span class="s1">&#39;median&#39;</span><span class="p">:</span> <span class="n">median</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Unknown type; please choose from: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">options</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span> <span class="o">=</span> <span class="n">idx</span>
+
+        <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Lukas Snoek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

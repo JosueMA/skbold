@@ -1,0 +1,404 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skbold.utils.load_roi_mask &mdash; skbold 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="skbold 0.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> skbold
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README_link.html">skbold - utilities and tools for machine learning on BOLD-fMRI data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/skbold.html">skbold package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">skbold</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>skbold.utils.load_roi_mask</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for skbold.utils.load_roi_mask</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Function to create a mask from a roi from a given atlas.</span>
+
+<span class="c1"># Author: Lukas Snoek [lukassnoek.github.io]</span>
+<span class="c1"># Contact: lukassnoek@gmail.com</span>
+<span class="c1"># License: 3 clause BSD</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">import</span> <span class="nn">skbold</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">op</span>
+<span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nib</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">.parse_roi_labels</span> <span class="k">import</span> <span class="n">parse_roi_labels</span>
+<span class="kn">from</span> <span class="nn">.roi_globals</span> <span class="k">import</span> <span class="n">available_atlases</span><span class="p">,</span> <span class="n">other_rois</span>
+
+<span class="n">roi_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">skbold</span><span class="o">.</span><span class="n">__file__</span><span class="p">),</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;ROIs&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="load_roi_mask"><a class="viewcode-back" href="../../../source/skbold.utils.load_roi_mask.html#skbold.utils.load_roi_mask.load_roi_mask">[docs]</a><span class="k">def</span> <span class="nf">load_roi_mask</span><span class="p">(</span><span class="n">roi_name</span><span class="p">,</span> <span class="n">atlas_name</span><span class="o">=</span><span class="s1">&#39;HarvardOxford-Cortical&#39;</span><span class="p">,</span>
+                  <span class="n">resolution</span><span class="o">=</span><span class="s1">&#39;2mm&#39;</span><span class="p">,</span> <span class="n">lateralized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">which_hemifield</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">maxprob</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">yeo_conservative</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Loads a mask (from an atlas).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    roi_name : str</span>
+<span class="sd">        Name of the ROI (as specified in the FSL XML-files)</span>
+<span class="sd">    atlas_name : str</span>
+<span class="sd">        Name of the atlas. Choose from: &#39;HarvardOxford-Cortical&#39;,</span>
+<span class="sd">        &#39;HarvardOxford-Subcortical&#39;, &#39;MNI&#39;, &#39;JHU-labels&#39;, &#39;JHU-tracts&#39;,</span>
+<span class="sd">        &#39;Talairach&#39;, &#39;Yeo2011&#39;.</span>
+<span class="sd">    resolution : str</span>
+<span class="sd">        Resolution of the mask/atlas (&#39;1mm&#39; or &#39;2mm&#39;)</span>
+<span class="sd">    lateralized : bool</span>
+<span class="sd">        Whether to use lateralized masks (only available for Harvard-</span>
+<span class="sd">        Oxford atlases). If this variable is specified, you have to specify</span>
+<span class="sd">        which_hemifield too.</span>
+<span class="sd">    which_hemifield : str</span>
+<span class="sd">        If lateralized is True, then which hemifield should be used?</span>
+<span class="sd">    threshold : int</span>
+<span class="sd">        Threshold for probabilistic masks (everything below this threshold is</span>
+<span class="sd">        set to zero before creating the mask).</span>
+<span class="sd">    maxprob : bool</span>
+<span class="sd">        Whether to select only the voxels that have the highest probability</span>
+<span class="sd">        of that particular ROI for a given threshold. Setting this option to</span>
+<span class="sd">        true ensures that each mask has unique voxels (substantially slows</span>
+<span class="sd">        down the function, though).</span>
+<span class="sd">    yeo_conservative : bool</span>
+<span class="sd">        If Yeo2011 atlas is picked, whether the conservative or liberal atlas</span>
+<span class="sd">        should be used.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mask : (list of) numpy-array(s)</span>
+<span class="sd">        Boolean numpy array(s) indicating the ROI-mask(s).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s1">&#39;Yeo&#39;</span> <span class="ow">in</span> <span class="n">atlas_name</span><span class="p">:</span>
+        <span class="n">lateralized</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># Trick to parse all the ROIs in a mask!</span>
+    <span class="k">if</span> <span class="n">roi_name</span> <span class="ow">is</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="c1"># ToDo: make a generator out of this to save memory?</span>
+
+        <span class="k">if</span> <span class="n">atlas_name</span> <span class="o">==</span> <span class="s1">&#39;HarvardOxford-All&#39;</span><span class="p">:</span>
+            <span class="n">roi_name</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">parse_roi_labels</span><span class="p">(</span><span class="s1">&#39;HarvardOxford-Cortical&#39;</span><span class="p">,</span>
+                                               <span class="n">lateralized</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">roi_name2</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">parse_roi_labels</span><span class="p">(</span><span class="s1">&#39;HarvardOxford-Subcortical&#39;</span><span class="p">,</span>
+                                                <span class="n">lateralized</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">roi_name</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">roi_name2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">roi_name</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">parse_roi_labels</span><span class="p">(</span><span class="n">atlas_name</span><span class="p">,</span>
+                                               <span class="n">lateralized</span><span class="o">=</span><span class="n">lateralized</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="c1"># If doing all ROIs, no need to look for L/R</span>
+        <span class="k">if</span> <span class="s1">&#39;JHU&#39;</span> <span class="ow">in</span> <span class="n">atlas_name</span><span class="p">:</span>
+            <span class="n">lateralized</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># First time of a (doubtful) use of a recursive function, yay!</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">roi_name</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">load_roi_mask</span><span class="p">(</span><span class="n">roi_n</span><span class="p">,</span> <span class="n">atlas_name</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span>
+                              <span class="n">lateralized</span><span class="p">,</span> <span class="n">which_hemifield</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">maxprob</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">roi_n</span> <span class="ow">in</span> <span class="n">roi_name</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Trying to load mask: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">roi_name</span><span class="p">)</span>
+
+    <span class="c1"># Check compatibility settings</span>
+    <span class="n">_check_cfg</span><span class="p">(</span><span class="n">roi_name</span><span class="p">,</span> <span class="n">atlas_name</span><span class="p">,</span> <span class="n">lateralized</span><span class="p">,</span> <span class="n">which_hemifield</span><span class="p">)</span>
+
+    <span class="c1"># If roi is just a simple ROI-file, then load it and return it</span>
+    <span class="k">if</span> <span class="n">roi_name</span> <span class="ow">in</span> <span class="n">other_rois</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">roi</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">other_rois</span><span class="p">[</span><span class="n">roi_name</span><span class="p">],</span> <span class="n">mmap</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">roi</span> <span class="o">&gt;</span> <span class="n">threshold</span>
+        <span class="k">return</span> <span class="n">mask</span>
+
+    <span class="c1"># Stupid hack to find correct atlas file when filenames vary too much</span>
+    <span class="n">lat_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;HarvardOxford&#39;</span> <span class="ow">in</span> <span class="n">atlas_name</span> <span class="ow">and</span> <span class="n">lateralized</span><span class="p">:</span>
+        <span class="n">lat_str</span> <span class="o">=</span> <span class="s1">&#39;lateralized&#39;</span>
+    <span class="k">elif</span> <span class="s1">&#39;HarvardOxford&#39;</span> <span class="ow">in</span> <span class="n">atlas_name</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">lateralized</span><span class="p">:</span>
+        <span class="n">lat_str</span> <span class="o">=</span> <span class="s1">&#39;bilateral&#39;</span>
+
+    <span class="n">cons_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;Yeo&#39;</span> <span class="ow">in</span> <span class="n">atlas_name</span><span class="p">:</span>
+        <span class="n">cons_str</span> <span class="o">=</span> <span class="s1">&#39;conservative&#39;</span> <span class="k">if</span> <span class="n">yeo_conservative</span> <span class="k">else</span> <span class="s1">&#39;liberal&#39;</span>
+
+    <span class="c1"># Try to find the atlas with wildcards</span>
+    <span class="n">atlas</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">roi_dir</span><span class="p">,</span> <span class="n">atlas_name</span><span class="p">,</span> <span class="s1">&#39;*</span><span class="si">%s</span><span class="s1">*</span><span class="si">%s</span><span class="s1">*</span><span class="si">%s</span><span class="s1">.nii.gz&#39;</span> <span class="o">%</span>
+                         <span class="p">(</span><span class="n">lat_str</span><span class="p">,</span> <span class="n">cons_str</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)))</span>
+
+    <span class="c1"># Another hack to get the lateralized atlas if queried</span>
+    <span class="n">JHU_atlas</span> <span class="o">=</span> <span class="s1">&#39;JHU&#39;</span> <span class="ow">in</span> <span class="n">atlas_name</span>
+    <span class="k">if</span> <span class="n">lateralized</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">JHU_atlas</span> <span class="ow">and</span> <span class="n">roi_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">]:</span>
+            <span class="n">roi_name</span> <span class="o">=</span> <span class="n">roi_name</span> <span class="o">+</span> <span class="s1">&#39; L&#39;</span> <span class="k">if</span> <span class="n">which_hemifield</span> <span class="o">==</span> <span class="s1">&#39;left&#39;</span> <span class="k">else</span> <span class="s1">&#39; R&#39;</span>
+
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">JHU_atlas</span> <span class="ow">and</span> <span class="n">roi_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Left&#39;</span><span class="p">,</span> <span class="s1">&#39;Right&#39;</span><span class="p">]:</span>
+            <span class="n">roi_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">which_hemifield</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span>
+                                  <span class="n">which_hemifield</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">roi_name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atlas</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Found more than one atlas, namely: </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">atlas</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">atlas</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Didn&#39;t find any atlas at all ...&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">atlas</span> <span class="o">=</span> <span class="n">atlas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="s1">&#39;prob&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">atlas</span><span class="p">)</span> <span class="ow">and</span> <span class="n">maxprob</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Setting maxprob to false because it&#39;s not &quot;</span>
+              <span class="s2">&quot;a probabilistic atlas.&quot;</span><span class="p">)</span>
+        <span class="n">maxprob</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">atlas_img</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">atlas</span><span class="p">,</span> <span class="n">mmap</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">info_dict</span> <span class="o">=</span> <span class="n">parse_roi_labels</span><span class="p">(</span><span class="n">atlas_name</span><span class="p">,</span> <span class="n">lateralized</span><span class="o">=</span><span class="n">lateralized</span><span class="p">,</span>
+                                 <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Trying to find the index corresponding to the roi-name</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">roi_name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>  <span class="c1"># Hack to check for non-lateralized masks in atlas</span>
+        <span class="k">if</span> <span class="n">roi_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Left&#39;</span><span class="p">,</span> <span class="s1">&#39;Right&#39;</span><span class="p">]:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">roi_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">roi_name</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">]:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">roi_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">maxprob</span><span class="p">:</span>
+        <span class="n">atlas_loaded</span> <span class="o">=</span> <span class="n">atlas_img</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="n">atlas_loaded</span><span class="p">[</span><span class="n">atlas_loaded</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">atlas_maxprob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">atlas_loaded</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">atlas_maxprob</span> <span class="o">==</span> <span class="n">idx</span>
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atlas_img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">atlas_img</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span> <span class="o">==</span> <span class="n">idx</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">roi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">atlas_img</span><span class="o">.</span><span class="n">dataobj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">idx</span><span class="p">])</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">roi</span> <span class="o">&gt;</span> <span class="n">threshold</span>
+
+    <span class="k">return</span> <span class="n">mask</span></div>
+
+
+<span class="k">def</span> <span class="nf">_check_cfg</span><span class="p">(</span><span class="n">roi_name</span><span class="p">,</span> <span class="n">atlas_name</span><span class="p">,</span> <span class="n">lateralized</span><span class="p">,</span> <span class="n">which_hemifield</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">roi_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">other_rois</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="n">atlas_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Could not find your ROI and you also didn&#39;t specify an &quot;</span>
+               <span class="s2">&quot;atlas in which it could be. Please specify the appropriate&quot;</span>
+               <span class="s2">&quot; atlas or choose from: </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">other_rois</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">atlas_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">atlas_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">available_atlases</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Could not find your specified atlas! &quot;</span>
+               <span class="s2">&quot;Please choose from: </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">available_atlases</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">lateralized</span> <span class="ow">and</span> <span class="n">which_hemifield</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;You specified a lateralized mask, but you haven&#39;t indicated &quot;</span>
+               <span class="s2">&quot;which hemifield. Please set which_hemifield={&#39;left&#39;, &#39;right}.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Lukas Snoek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

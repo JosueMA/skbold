@@ -1,0 +1,484 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skbold.postproc.mvp_results module &mdash; skbold 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="skbold 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="skbold.postproc package" href="skbold.postproc.html"/>
+        <link rel="next" title="skbold.preproc package" href="skbold.preproc.html"/>
+        <link rel="prev" title="skbold.postproc.extract_roi_info module" href="skbold.postproc.extract_roi_info.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> skbold
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../README_link.html">skbold - utilities and tools for machine learning on BOLD-fMRI data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="skbold.html">skbold package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="skbold.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="skbold.core.html">skbold.core package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.estimators.html">skbold.estimators package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.exp_model.html">skbold.exp_model package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.feature_extraction.html">skbold.feature_extraction package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.feature_selection.html">skbold.feature_selection package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.pipelines.html">skbold.pipelines package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="skbold.postproc.html">skbold.postproc package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="skbold.postproc.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.preproc.html">skbold.preproc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.utils.html">skbold.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">skbold</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="skbold.html">skbold package</a> &raquo;</li>
+        
+          <li><a href="skbold.postproc.html">skbold.postproc package</a> &raquo;</li>
+        
+      <li>skbold.postproc.mvp_results module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/skbold.postproc.mvp_results.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-skbold.postproc.mvp_results">
+<span id="skbold-postproc-mvp-results-module"></span><h1>skbold.postproc.mvp_results module<a class="headerlink" href="#module-skbold.postproc.mvp_results" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="skbold.postproc.mvp_results.MvpAverageResults">
+<em class="property">class </em><code class="descname">MvpAverageResults</code><span class="sig-paren">(</span><em>out_dir</em>, <em>type='classification'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/postproc/mvp_results.html#MvpAverageResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.postproc.mvp_results.MvpAverageResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Averages results from MVPA analyses on, for example, different subjects
+or different ROIs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>out_dir</strong> (<em>str</em>) &#8211; Absolute path to directory where the results will be saved.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skbold.postproc.mvp_results.MvpAverageResults.compute">
+<code class="descname">compute</code><span class="sig-paren">(</span><em>mvp_list</em>, <em>identifiers</em>, <em>metric='f1'</em>, <em>h0=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/postproc/mvp_results.html#MvpAverageResults.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.postproc.mvp_results.MvpAverageResults.compute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skbold.postproc.mvp_results.MvpAverageResults.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>path</em>, <em>name='average_results'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/postproc/mvp_results.html#MvpAverageResults.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.postproc.mvp_results.MvpAverageResults.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.postproc.mvp_results.MvpResults">
+<em class="property">class </em><code class="descname">MvpResults</code><span class="sig-paren">(</span><em>mvp</em>, <em>n_iter</em>, <em>out_path=None</em>, <em>feature_scoring=''</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/postproc/mvp_results.html#MvpResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.postproc.mvp_results.MvpResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class to keep track of model evaluation metrics and feature scores.
+See the <a class="reference external" href="http://skbold.readthedocs.io">ReadTheDocs</a> homepage for more information on its API and use.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mvp</strong> (<em>mvp-object</em>) &#8211; Necessary to extract some metadata from.</li>
+<li><strong>n_iter</strong> (<em>int</em>) &#8211; Number of folds that will be kept track of.</li>
+<li><strong>out_path</strong> (<em>str</em>) &#8211; Path to save results to.</li>
+<li><strong>feature_scoring</strong> (<em>str</em>) &#8211; Which method to use to calculate feature-scores with. Can be:
+1) &#8216;fwm&#8217;: feature weight mapping <a class="footnote-reference" href="#id3" id="id1">[1]</a> - keep track of
+raw voxel-weights (coefficients)
+2) &#8216;forward&#8217;: transform raw voxel-weights to corresponding forward-
+model <a class="footnote-reference" href="#id4" id="id2">[2]</a>.</li>
+<li><strong>verbose</strong> (<em>bool</em>) &#8211; Whether to print extra output.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Stelzer, J., Buschmann, T., Lohmann, G., Margulies, D.S., Trampel,
+R., and Turner, R. (2014). Prioritizing spatial accuracy in
+high-resolution fMRI data using multivariate feature weight mapping.
+Front. Neurosci., <a class="reference external" href="http://dx.doi.org/10.3389/fnins.2014.00066">http://dx.doi.org/10.3389/fnins.2014.00066</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Haufe, S., Meineck, F., Gorger, K., Dahne, S., Haynes, J-D.,</td></tr>
+</tbody>
+</table>
+<p>Blankertz, B., and Biessmann, F. et al. (2014). On the interpretation of
+weight vectors of linear models in multivariate neuroimaging. Neuroimage,
+87, 96-110.</p>
+<dl class="method">
+<dt id="skbold.postproc.mvp_results.MvpResults.load_model">
+<code class="descname">load_model</code><span class="sig-paren">(</span><em>path</em>, <em>param=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/postproc/mvp_results.html#MvpResults.load_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.postproc.mvp_results.MvpResults.load_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load model or pipeline from disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<em>str</em>) &#8211; Absolute path to model.</li>
+<li><strong>param</strong> (<em>str</em>) &#8211; Which, if any, specific param needs to be loaded.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.postproc.mvp_results.MvpResults.save_model">
+<code class="descname">save_model</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/postproc/mvp_results.html#MvpResults.save_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.postproc.mvp_results.MvpResults.save_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to serialize model(s) to disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> (<em>pipeline</em><em> or </em><em>scikit-learn object.</em>) &#8211; Model to be saved.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.postproc.mvp_results.MvpResults.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>feature_viz=True</em>, <em>confmat=True</em>, <em>to_tstat=True</em>, <em>multiclass='ovr'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/postproc/mvp_results.html#MvpResults.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.postproc.mvp_results.MvpResults.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes results to disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>to_tstat</strong> (<em>bool</em>) &#8211; Whether to convert averaged coefficients to t-tstats (by dividing
+them by sqrt(coefs.std(axis=0)).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.postproc.mvp_results.MvpResultsClassification">
+<em class="property">class </em><code class="descname">MvpResultsClassification</code><span class="sig-paren">(</span><em>mvp</em>, <em>n_iter</em>, <em>feature_scoring='fwm'</em>, <em>verbose=False</em>, <em>out_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/postproc/mvp_results.html#MvpResultsClassification"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.postproc.mvp_results.MvpResultsClassification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#skbold.postproc.mvp_results.MvpResults" title="skbold.postproc.mvp_results.MvpResults"><code class="xref py py-class docutils literal"><span class="pre">skbold.postproc.mvp_results.MvpResults</span></code></a></p>
+<p>MvpResults class specifically for classification analyses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mvp</strong> (<em>mvp-object</em>) &#8211; Necessary to extract some metadata from.</li>
+<li><strong>n_iter</strong> (<em>int</em>) &#8211; Number of folds that will be kept track of.</li>
+<li><strong>out_path</strong> (<em>str</em>) &#8211; Path to save results to.</li>
+<li><strong>feature_scoring</strong> (<em>str</em>) &#8211; Which method to use to calculate feature-scores with. Can be:
+1) &#8216;coef&#8217;: keep track of raw voxel-weights (coefficients)
+2) &#8216;forward&#8217;: transform raw voxel-weights to corresponding forward-
+model (see Haufe et al. (2014). On the interpretation of weight vectors
+of linear models in multivariate neuroimaging. Neuroimage, 87, 96-110.)</li>
+<li><strong>verbose</strong> (<em>bool</em>) &#8211; Whether to print extra output.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skbold.postproc.mvp_results.MvpResultsClassification.compute_scores">
+<code class="descname">compute_scores</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/postproc/mvp_results.html#MvpResultsClassification.compute_scores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.postproc.mvp_results.MvpResultsClassification.compute_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes scores across folds.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.postproc.mvp_results.MvpResultsClassification.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>test_idx</em>, <em>y_pred</em>, <em>pipeline=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/postproc/mvp_results.html#MvpResultsClassification.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.postproc.mvp_results.MvpResultsClassification.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates with information from current fold.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>test_idx</strong> (<em>ndarray</em>) &#8211; Indices of current test-trials.</li>
+<li><strong>y_pred</strong> (<em>ndarray</em>) &#8211; Predictions of current test-trials.</li>
+<li><strong>values</strong> (<em>ndarray</em>) &#8211; Values of features for model in the current fold. This can be the
+entire pipeline (in this case, it is extracted automaticlly). When
+a pipeline is passed, the idx-parameter does not have to be passed.</li>
+<li><strong>idx</strong> (<em>ndarray</em>) &#8211; Index mapping the &#8216;values&#8217; back to whole-brain space.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.postproc.mvp_results.MvpResultsRegression">
+<em class="property">class </em><code class="descname">MvpResultsRegression</code><span class="sig-paren">(</span><em>mvp</em>, <em>n_iter</em>, <em>feature_scoring=''</em>, <em>verbose=False</em>, <em>out_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/postproc/mvp_results.html#MvpResultsRegression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.postproc.mvp_results.MvpResultsRegression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#skbold.postproc.mvp_results.MvpResults" title="skbold.postproc.mvp_results.MvpResults"><code class="xref py py-class docutils literal"><span class="pre">skbold.postproc.mvp_results.MvpResults</span></code></a></p>
+<p>MvpResults class specifically for Regression analyses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mvp</strong> (<em>mvp-object</em>) &#8211; Necessary to extract some metadata from.</li>
+<li><strong>n_iter</strong> (<em>int</em>) &#8211; Number of folds that will be kept track of.</li>
+<li><strong>out_path</strong> (<em>str</em>) &#8211; Path to save results to.</li>
+<li><strong>feature_scoring</strong> (<em>str</em>) &#8211; Which method to use to calculate feature-scores with. Can be:
+1) &#8216;coef&#8217;: keep track of raw voxel-weights (coefficients)
+2) &#8216;forward&#8217;: transform raw voxel-weights to corresponding forward-
+model (see Haufe et al. (2014). On the interpretation of weight vectors
+of linear models in multivariate neuroimaging. Neuroimage, 87, 96-110.)</li>
+<li><strong>verbose</strong> (<em>bool</em>) &#8211; Whether to print extra output.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>:param .. warning:: Has not been tested with MvpWithin!:</p>
+<dl class="method">
+<dt id="skbold.postproc.mvp_results.MvpResultsRegression.compute_scores">
+<code class="descname">compute_scores</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/postproc/mvp_results.html#MvpResultsRegression.compute_scores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.postproc.mvp_results.MvpResultsRegression.compute_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes scores across folds.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.postproc.mvp_results.MvpResultsRegression.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>test_idx</em>, <em>y_pred</em>, <em>pipeline=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/postproc/mvp_results.html#MvpResultsRegression.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.postproc.mvp_results.MvpResultsRegression.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates with information from current fold.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>test_idx</strong> (<em>ndarray</em>) &#8211; Indices of current test-trials.</li>
+<li><strong>y_pred</strong> (<em>ndarray</em>) &#8211; Predictions of current test-trials.</li>
+<li><strong>pipeline</strong> (<em>scikit-learn Pipeline object</em>) &#8211; pipeline from which relevant scores/coefficients will be
+extracted.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="skbold.preproc.html" class="btn btn-neutral float-right" title="skbold.preproc package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="skbold.postproc.extract_roi_info.html" class="btn btn-neutral" title="skbold.postproc.extract_roi_info module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Lukas Snoek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

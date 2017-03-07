@@ -1,0 +1,656 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skbold.exp_model.batch_fsf &mdash; skbold 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="skbold 0.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> skbold
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README_link.html">skbold - utilities and tools for machine learning on BOLD-fMRI data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/skbold.html">skbold package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">skbold</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>skbold.exp_model.batch_fsf</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for skbold.exp_model.batch_fsf</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">range</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="nb">open</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">op</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+<span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nib</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">skbold</span>
+
+
+<div class="viewcode-block" id="FsfCrawler"><a class="viewcode-back" href="../../../source/skbold.exp_model.batch_fsf.html#skbold.exp_model.FsfCrawler">[docs]</a><span class="k">class</span> <span class="nc">FsfCrawler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given an fsf-template, this crawler creates subject-specific fsf-FEAT files</span>
+<span class="sd">    assuming that appropriate .bfsl files exist.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    template : str</span>
+<span class="sd">        Absolute path to template fsf-file. Default is &#39;mvpa&#39;, which models</span>
+<span class="sd">        each bfsl-file as a separate regressor (and contrast against baseline).</span>
+<span class="sd">    preproc_dir : str</span>
+<span class="sd">        Absolute path to directory with preprocessed files.</span>
+<span class="sd">    run_idf : str</span>
+<span class="sd">        Identifier for run to apply template fsf to.</span>
+<span class="sd">    output_dir : str</span>
+<span class="sd">        Path to desired output dir of first-levels.</span>
+<span class="sd">    subject_idf : str</span>
+<span class="sd">        Identifier for subject-directories.</span>
+<span class="sd">    func_idf : str</span>
+<span class="sd">        Identifier for which functional should be use.</span>
+<span class="sd">    prewhiten : bool</span>
+<span class="sd">        Whether the data should be prewhitened in model fitting</span>
+<span class="sd">    derivs : bool</span>
+<span class="sd">        Whether to model derivatives of original regressors</span>
+<span class="sd">    n_cores : int</span>
+<span class="sd">        How many CPU cores should be used for the batch-analysis.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preproc_dir</span><span class="p">,</span> <span class="n">run_idf</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="s1">&#39;mvpa&#39;</span><span class="p">,</span>
+                 <span class="n">output_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subject_idf</span><span class="o">=</span><span class="s1">&#39;sub&#39;</span><span class="p">,</span>
+                 <span class="n">func_idf</span><span class="o">=</span><span class="s1">&#39;func&#39;</span><span class="p">,</span> <span class="n">prewhiten</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">n_cores</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">template</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preproc_dir</span> <span class="o">=</span> <span class="n">preproc_dir</span>
+
+        <span class="k">if</span> <span class="n">output_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">template</span><span class="p">),</span> <span class="s1">&#39;Firstlevels&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">op</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span> <span class="o">=</span> <span class="n">output_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_idf</span> <span class="o">=</span> <span class="n">run_idf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func_idf</span> <span class="o">=</span> <span class="n">func_idf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subject_idf</span> <span class="o">=</span> <span class="n">subject_idf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prewhiten</span> <span class="o">=</span> <span class="n">prewhiten</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">derivs</span> <span class="o">=</span> <span class="n">derivs</span>
+
+        <span class="k">if</span> <span class="n">n_cores</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">n_cores</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_cores</span> <span class="o">=</span> <span class="n">n_cores</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clean_fsf</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_fsf</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub_dirs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_paths</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="FsfCrawler.crawl"><a class="viewcode-back" href="../../../source/skbold.exp_model.batch_fsf.html#skbold.exp_model.FsfCrawler.crawl">[docs]</a>    <span class="k">def</span> <span class="nf">crawl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Crawls subject-directories and spits out subject-specific fsf. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_read_fsf</span><span class="p">()</span>
+
+        <span class="n">run_paths</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">preproc_dir</span><span class="p">,</span> <span class="s1">&#39;*</span><span class="si">%s</span><span class="s1">*&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject_idf</span><span class="p">,</span>
+                            <span class="s1">&#39;*</span><span class="si">%s</span><span class="s1">*&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_idf</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub_dirs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">run_paths</span><span class="p">))</span>
+
+        <span class="n">fsf_paths</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_write_fsf</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span> <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_dirs</span><span class="p">]</span>
+
+        <span class="n">shell_script</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="p">),</span> <span class="s1">&#39;batch_fsf.sh&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">shell_script</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">fsf</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fsf_paths</span><span class="p">):</span>
+
+                <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;feat </span><span class="si">%s</span><span class="s1"> &amp;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">fsf</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cores</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;wait</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_read_fsf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Reads in template-fsf and does some cleaning. &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">==</span> <span class="s1">&#39;single_trial&#39;</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
+                               <span class="n">op</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))),</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;Feat_single_trial_template.fsf&#39;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+        <span class="n">template</span> <span class="o">=</span> <span class="p">[</span><span class="n">txt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">txt</span> <span class="ow">in</span> <span class="n">template</span> <span class="k">if</span> <span class="n">txt</span> <span class="o">!=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">]</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="p">[</span><span class="n">txt</span> <span class="k">for</span> <span class="n">txt</span> <span class="ow">in</span> <span class="n">template</span> <span class="k">if</span> <span class="n">txt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;#&#39;</span><span class="p">]</span>  <span class="c1"># remove commnts</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clean_fsf</span> <span class="o">=</span> <span class="n">template</span>
+
+    <span class="k">def</span> <span class="nf">_write_fsf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates and writes out subject-specific fsf. &quot;&quot;&quot;</span>
+        <span class="n">func_file</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span> <span class="s1">&#39;*</span><span class="si">%s</span><span class="s1">*.nii.gz&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_idf</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">func_file</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Found no func-file for sub </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sub_dir</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">func_file</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Found more than one func-file for sub </span><span class="si">%s</span><span class="s2">: </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span>
+                                                                    <span class="n">func_file</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">func_file</span> <span class="o">=</span> <span class="n">func_file</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">out_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">op</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">out_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
+
+        <span class="n">feat_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.feat&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_idf</span><span class="p">)</span>
+
+        <span class="n">hdr</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">func_file</span><span class="p">)</span><span class="o">.</span><span class="n">header</span>
+
+        <span class="n">arg_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tr&#39;</span><span class="p">:</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;pixdim&#39;</span><span class="p">][</span><span class="mi">4</span><span class="p">],</span>
+                    <span class="s1">&#39;npts&#39;</span><span class="p">:</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;dim&#39;</span><span class="p">][</span><span class="mi">4</span><span class="p">],</span>
+                    <span class="s1">&#39;custom&#39;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span> <span class="s1">&#39;*.bfsl&#39;</span><span class="p">))),</span>
+                    <span class="s1">&#39;feat_files&#39;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">func_file</span><span class="p">,</span>
+                    <span class="s1">&#39;outputdir&#39;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">feat_dir</span><span class="p">,</span>
+                    <span class="s1">&#39;prewhiten_yn&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prewhiten</span><span class="p">)),</span>
+                    <span class="s1">&#39;totalVoxels&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;dim&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">])}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">==</span> <span class="s1">&#39;mvpa&#39;</span><span class="p">:</span>
+            <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;ncon_orig&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;custom&#39;</span><span class="p">]))</span>
+            <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;ncon_real&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;custom&#39;</span><span class="p">]))</span>
+            <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;nftests_orig&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
+            <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;nftests_real&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
+            <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;evs_orig&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;custom&#39;</span><span class="p">]))</span>
+            <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;evs_real&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;custom&#39;</span><span class="p">]))</span>
+            <span class="n">arg_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;custom&#39;</span><span class="p">)</span>
+
+        <span class="n">fsf_out</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Loop over lines in cleaned template-fsf</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean_fsf</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">line</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">arg_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">txt</span> <span class="k">for</span> <span class="n">txt</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">txt</span><span class="p">]</span>
+                <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">arg_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">line</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">arg_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">ev</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="n">bfsls</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span> <span class="s1">&#39;*.bfsl&#39;</span><span class="p">)))</span>
+                    <span class="n">to_set</span> <span class="o">=</span> <span class="p">[</span><span class="n">bfsl</span> <span class="k">for</span> <span class="n">bfsl</span> <span class="ow">in</span> <span class="n">bfsls</span> <span class="k">if</span> <span class="n">ev</span> <span class="ow">in</span> <span class="n">bfsl</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">to_set</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">to_set</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">]</span>
+
+                <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">==</span> <span class="s1">&#39;mvpa&#39;</span><span class="p">:</span>
+            <span class="n">fsf_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_append_single_trial_info</span><span class="p">(</span>
+                <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span> <span class="s1">&#39;*.bfsl&#39;</span><span class="p">))),</span> <span class="n">fsf_out</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span> <span class="s1">&#39;design.fsf&#39;</span><span class="p">),</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fsfout</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Writing fsf to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sub_dir</span><span class="p">)</span>
+            <span class="n">fsfout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsf_out</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span> <span class="s1">&#39;design.fsf&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_append_single_trial_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bfsls</span><span class="p">,</span> <span class="n">fsf_out</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Does some specific &#39;single-trial&#39; (mvpa) stuff. &quot;&quot;&quot;</span>
+        <span class="n">n_evs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bfsls</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bfsl</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bfsls</span><span class="p">):</span>
+
+            <span class="n">basename</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">bfsl</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(evtitle</span><span class="si">%i</span><span class="s1">) </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">basename</span><span class="p">))</span>
+            <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(shape</span><span class="si">%i</span><span class="s1">) 3&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(convolve</span><span class="si">%i</span><span class="s1">) 3&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(convolve_phase</span><span class="si">%i</span><span class="s1">) 0&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(tempfilt_yn</span><span class="si">%i</span><span class="s1">) 0&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(deriv_yn</span><span class="si">%i</span><span class="s1">) </span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">derivs</span><span class="p">))</span>
+            <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(custom</span><span class="si">%i</span><span class="s1">) </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">bfsl</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_evs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(ortho</span><span class="si">%i</span><span class="s1">.</span><span class="si">%i</span><span class="s1">) 0&#39;</span> <span class="o">%</span> <span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">x</span><span class="p">))</span>
+
+            <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(conpic_real.</span><span class="si">%i</span><span class="s1">) 0&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(conname_real.</span><span class="si">%i</span><span class="s1">) </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                                                                 <span class="n">basename</span><span class="p">))</span>
+            <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(conpic_orig.</span><span class="si">%i</span><span class="s1">) 0&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(conname_orig.</span><span class="si">%i</span><span class="s1">) </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                                                                 <span class="n">basename</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_evs</span><span class="p">):</span>
+                <span class="n">to_set</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span> <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;0&quot;</span>
+
+                <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(con_real</span><span class="si">%i</span><span class="s1">.</span><span class="si">%i</span><span class="s1">) </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">to_set</span><span class="p">))</span>
+
+                <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(con_orig</span><span class="si">%i</span><span class="s1">.</span><span class="si">%i</span><span class="s1">) </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">to_set</span><span class="p">))</span>
+
+            <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(ftest_real1.</span><span class="si">%i</span><span class="s1">) 1&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(ftest_orig1.</span><span class="si">%i</span><span class="s1">) 1&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_evs</span><span class="p">):</span>
+
+            <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_evs</span><span class="p">):</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="k">continue</span>
+
+                <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;set fmri(conmask</span><span class="si">%i</span><span class="s1">_</span><span class="si">%i</span><span class="s1">) 0&#39;</span> <span class="o">%</span> <span class="p">((</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                                                             <span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="n">fsf_out</span></div>
+
+
+<div class="viewcode-block" id="MelodicCrawler"><a class="viewcode-back" href="../../../source/skbold.exp_model.batch_fsf.html#skbold.exp_model.MelodicCrawler">[docs]</a><span class="k">class</span> <span class="nc">MelodicCrawler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preproc_dir</span><span class="p">,</span> <span class="n">run_idf</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">subject_idf</span><span class="o">=</span><span class="s1">&#39;sub&#39;</span><span class="p">,</span> <span class="n">func_idf</span><span class="o">=</span><span class="s1">&#39;func&#39;</span><span class="p">,</span> <span class="n">copy_reg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">copy_mc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">varnorm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">n_cores</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given an fsf-template (Melodic), this crawler creates subject-</span>
+<span class="sd">        specific fsf-melodic files and (optionally) copies the corresponding</span>
+<span class="sd">        registration and mc directories to the out-directory.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        template : str</span>
+<span class="sd">            Absolute path to template fsf-file</span>
+<span class="sd">        preproc_dir : str</span>
+<span class="sd">            Absolute path to the directory with preprocessed files</span>
+<span class="sd">        run_idf : str</span>
+<span class="sd">            Identifier for run to apply template fsf to</span>
+<span class="sd">        output_dir : str</span>
+<span class="sd">            Path to desired output dir of Melodic-ica results.</span>
+<span class="sd">        subject_idf : str</span>
+<span class="sd">            Identifier for subject-directories.</span>
+<span class="sd">        func_idf : str</span>
+<span class="sd">            Identifier for which functional should be use.</span>
+<span class="sd">        copy_reg : bool</span>
+<span class="sd">            Whether to copy the subjects&#39; registration directory</span>
+<span class="sd">        copy_mc : bool</span>
+<span class="sd">            Whether to copy the subjects&#39; mc directory</span>
+<span class="sd">        varnorm : bool</span>
+<span class="sd">            Whether to apply variance-normalization (melodic option)</span>
+<span class="sd">        n_cores : int</span>
+<span class="sd">            How many CPU cores should be used for the batch-analysis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">template</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preproc_dir</span> <span class="o">=</span> <span class="n">preproc_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copy_reg</span> <span class="o">=</span> <span class="n">copy_reg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copy_mc</span> <span class="o">=</span> <span class="n">copy_mc</span>
+
+        <span class="k">if</span> <span class="n">output_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">template</span><span class="p">),</span> <span class="s1">&#39;Melodic&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">op</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span> <span class="o">=</span> <span class="n">output_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_idf</span> <span class="o">=</span> <span class="n">run_idf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func_idf</span> <span class="o">=</span> <span class="n">func_idf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subject_idf</span> <span class="o">=</span> <span class="n">subject_idf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">varnorm</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span> <span class="k">if</span> <span class="n">varnorm</span> <span class="k">else</span> <span class="s2">&quot;0&quot;</span>
+
+        <span class="k">if</span> <span class="n">n_cores</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">n_cores</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_cores</span> <span class="o">=</span> <span class="n">n_cores</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clean_fsf</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_fsf</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub_dirs</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="MelodicCrawler.crawl"><a class="viewcode-back" href="../../../source/skbold.exp_model.batch_fsf.html#skbold.exp_model.MelodicCrawler.crawl">[docs]</a>    <span class="k">def</span> <span class="nf">crawl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Crawls subject-directories and spits out subject-specific fsf. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_read_fsf</span><span class="p">()</span>
+        <span class="n">run_paths</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">preproc_dir</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">*&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject_idf</span><span class="p">,</span>
+                            <span class="s1">&#39;*</span><span class="si">%s</span><span class="s1">*&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_idf</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub_dirs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="n">run_paths</span><span class="p">))</span>
+        <span class="n">out_f</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_write_fsf</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span> <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_dirs</span><span class="p">]</span>
+
+        <span class="n">shell_script</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="p">),</span> <span class="s1">&#39;batch_melodic.sh&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">shell_script</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">fsf</span><span class="p">,</span> <span class="n">reg_cmd</span><span class="p">,</span> <span class="n">mc_cmd</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">out_f</span><span class="p">):</span>
+
+                <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;feat </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">fsf</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">reg_cmd</span> <span class="ow">or</span> <span class="n">mc_cmd</span><span class="p">:</span>
+                    <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">reg_cmd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">reg_cmd</span> <span class="o">+</span> <span class="s1">&#39; &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">mc_cmd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">mc_cmd</span> <span class="o">+</span> <span class="s1">&#39; &amp;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cores</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;wait</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_copy_reg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub_dir</span><span class="p">,</span> <span class="n">ica_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Tries to find reg-dir and returns copy command&quot;&quot;&quot;</span>
+        <span class="n">dst</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ica_dir</span><span class="p">,</span> <span class="s1">&#39;reg&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dst</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">regdir</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">),</span> <span class="s1">&#39;*reg*&#39;</span><span class="p">))</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Found multiple (or no) registration directories in </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%r</span><span class="s2">)&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">regdir</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span> <span class="n">regdir</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">regdir</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;reg&#39;</span><span class="p">:</span>
+                <span class="n">to_copy</span> <span class="o">=</span> <span class="n">regdir</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">regdir_ch</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">regdir</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;reg&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">op</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">regdir_ch</span><span class="p">):</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span> <span class="n">regdir_ch</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">to_copy</span> <span class="o">=</span> <span class="n">regdir_ch</span>
+
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;cp -r </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">to_copy</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
+            <span class="c1"># print(&#39;Copying %s to %s&#39; % (to_copy, dst))</span>
+            <span class="c1"># shutil.copytree(to_copy, dst)</span>
+            <span class="k">return</span> <span class="n">cmd</span>
+
+    <span class="k">def</span> <span class="nf">_copy_mc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub_dir</span><span class="p">,</span> <span class="n">ica_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Tries to find mc-dir and returns copy command.&quot;&quot;&quot;</span>
+        <span class="n">dst</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ica_dir</span><span class="p">,</span> <span class="s1">&#39;mc&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dst</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">mc_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span> <span class="s1">&#39;mc&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">op</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">mc_dir</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Could not find mc dir in </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sub_dir</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># print(&quot;Copying %s to %s&quot; % (mc_dir, op.join(ica_dir, &#39;mc&#39;)))</span>
+            <span class="c1"># shutil.copytree(mc_dir, op.join(ica_dir, &#39;mc&#39;))</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;cp -r </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">mc_dir</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">cmd</span>
+
+    <span class="k">def</span> <span class="nf">_read_fsf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Reads in template-fsf and does some cleaning. &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">skbold</span><span class="o">.</span><span class="n">__file__</span><span class="p">),</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;Melodic_template.fsf&#39;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+        <span class="n">template</span> <span class="o">=</span> <span class="p">[</span><span class="n">txt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">txt</span> <span class="ow">in</span> <span class="n">template</span> <span class="k">if</span> <span class="n">txt</span> <span class="o">!=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">]</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="p">[</span><span class="n">txt</span> <span class="k">for</span> <span class="n">txt</span> <span class="ow">in</span> <span class="n">template</span> <span class="k">if</span> <span class="n">txt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;#&#39;</span><span class="p">]</span>  <span class="c1"># remove commnts</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clean_fsf</span> <span class="o">=</span> <span class="n">template</span>
+
+    <span class="k">def</span> <span class="nf">_write_fsf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates and writes out subject-specific fsf. &quot;&quot;&quot;</span>
+        <span class="n">func_file</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span> <span class="s1">&#39;*</span><span class="si">%s</span><span class="s1">*.nii.gz&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_idf</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">func_file</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Found no func-file for sub </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sub_dir</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">func_file</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Found more than one func-file for sub </span><span class="si">%s</span><span class="s2">: </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span>
+                                                                    <span class="n">func_file</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">func_file</span> <span class="o">=</span> <span class="n">func_file</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">out_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">op</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">out_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
+
+        <span class="n">ica_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.ica&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_idf</span><span class="p">)</span>
+        <span class="n">hdr</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">func_file</span><span class="p">)</span><span class="o">.</span><span class="n">header</span>
+
+        <span class="n">arg_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tr&#39;</span><span class="p">:</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;pixdim&#39;</span><span class="p">][</span><span class="mi">4</span><span class="p">],</span>
+                    <span class="s1">&#39;npts&#39;</span><span class="p">:</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;dim&#39;</span><span class="p">][</span><span class="mi">4</span><span class="p">],</span>
+                    <span class="s1">&#39;feat_files&#39;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">func_file</span><span class="p">,</span>
+                    <span class="s1">&#39;outputdir&#39;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">ica_dir</span><span class="p">,</span>
+                    <span class="s1">&#39;varnorm&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">varnorm</span><span class="p">,</span>
+                    <span class="s1">&#39;totalVoxels&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;dim&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">])}</span>
+
+        <span class="n">fsf_out</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Loop over lines in cleaned template-fsf</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean_fsf</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">line</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">arg_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">txt</span> <span class="k">for</span> <span class="n">txt</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">txt</span><span class="p">]</span>
+                <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">arg_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">line</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">arg_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">]</span>
+
+                <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">]</span>
+                <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fsf_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span> <span class="s1">&#39;melodic.fsf&#39;</span><span class="p">),</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fsfout</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Writing fsf to </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sub_dir</span><span class="p">)</span>
+            <span class="n">fsfout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsf_out</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_reg</span><span class="p">:</span>
+            <span class="n">reg_cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_reg</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span> <span class="n">ica_dir</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_mc</span><span class="p">:</span>
+            <span class="n">mc_cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_mc</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span> <span class="n">ica_dir</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">,</span> <span class="s1">&#39;melodic.fsf&#39;</span><span class="p">),</span> <span class="n">reg_cmd</span><span class="p">,</span> <span class="n">mc_cmd</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Lukas Snoek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

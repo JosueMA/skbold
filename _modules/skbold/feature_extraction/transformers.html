@@ -1,0 +1,817 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skbold.feature_extraction.transformers &mdash; skbold 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="skbold 0.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> skbold
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README_link.html">skbold - utilities and tools for machine learning on BOLD-fMRI data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/skbold.html">skbold package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">skbold</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>skbold.feature_extraction.transformers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for skbold.feature_extraction.transformers</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Author: Lukas Snoek [lukassnoek.github.io]</span>
+<span class="c1"># Contact: lukassnoek@gmail.com</span>
+<span class="c1"># License: 3 clause BSD</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">range</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">op</span>
+<span class="kn">import</span> <span class="nn">skbold</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nib</span>
+
+<span class="kn">from</span> <span class="nn">..core</span> <span class="k">import</span> <span class="n">convert2epi</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="k">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="k">import</span> <span class="n">f_classif</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="k">import</span> <span class="n">PCA</span>
+<span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="k">import</span> <span class="n">label</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+
+<span class="n">roi_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">skbold</span><span class="o">.</span><span class="n">__file__</span><span class="p">),</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;ROIs&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;harvard_oxford&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ArrayPermuter"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.ArrayPermuter">[docs]</a><span class="k">class</span> <span class="nc">ArrayPermuter</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Permutes (shuffles) rows of matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initializes ArrayPermuter object. &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="ArrayPermuter.fit"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.ArrayPermuter.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Does nothing, but included to be used in sklearn&#39;s Pipeline. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="ArrayPermuter.transform"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.ArrayPermuter.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Permutes rows of data input.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Numeric (float) array of shape = [n_samples, n_features]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_new : ndarray</span>
+<span class="sd">            ndarray with permuted rows</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="AverageRegionTransformer"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.AverageRegionTransformer">[docs]</a><span class="k">class</span> <span class="nc">AverageRegionTransformer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transforms a whole-brain voxel pattern into a region-average pattern</span>
+<span class="sd">    Computes the average from different regions from a given parcellation</span>
+<span class="sd">    and returns those as features for X.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mask_type : List[str]</span>
+<span class="sd">        List with absolute paths to nifti-images of brain masks in</span>
+<span class="sd">        MNI152 (2mm) space.</span>
+<span class="sd">    mvp : Mvp-object (see core.mvp)</span>
+<span class="sd">        Mvp object that provides some metadata about previous masks</span>
+<span class="sd">    mask_threshold : int (default: 0)</span>
+<span class="sd">        Minimum threshold for probabilistic masks (such as Harvard-Oxford)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mvp</span><span class="p">,</span> <span class="n">mask_type</span><span class="o">=</span><span class="s1">&#39;unilateral&#39;</span><span class="p">,</span> <span class="n">mask_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">mask_type</span> <span class="ow">is</span> <span class="s1">&#39;unilateral&#39;</span><span class="p">:</span>
+            <span class="n">mask_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">roi_dir</span><span class="p">,</span> <span class="s1">&#39;unilateral&#39;</span><span class="p">)</span>
+            <span class="n">mask_list</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mask_dir</span><span class="p">,</span> <span class="s1">&#39;*.nii.gz&#39;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">mask_type</span> <span class="ow">is</span> <span class="s1">&#39;bilateral&#39;</span><span class="p">:</span>
+            <span class="n">mask_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">roi_dir</span><span class="p">,</span> <span class="s1">&#39;bilateral&#39;</span><span class="p">)</span>
+            <span class="n">mask_list</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mask_dir</span><span class="p">,</span> <span class="s1">&#39;*.nii.gz&#39;</span><span class="p">))</span>
+
+        <span class="c1"># If patterns are in epi-space, transform mni-masks to</span>
+        <span class="c1"># subject specific epi-space if it doesn&#39;t exist already</span>
+        <span class="k">if</span> <span class="n">mvp</span><span class="o">.</span><span class="n">ref_space</span> <span class="o">==</span> <span class="s1">&#39;epi&#39;</span><span class="p">:</span>
+            <span class="n">epi_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mvp</span><span class="o">.</span><span class="n">directory</span><span class="p">),</span> <span class="s1">&#39;epi_masks&#39;</span><span class="p">,</span>
+                              <span class="n">mask_type</span><span class="p">)</span>
+            <span class="n">reg_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mvp</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s1">&#39;reg&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Transforming mni-masks to epi (if necessary).&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask_list</span> <span class="o">=</span> <span class="n">convert2epi</span><span class="p">(</span><span class="n">mask_list</span><span class="p">,</span> <span class="n">reg_dir</span><span class="p">,</span> <span class="n">epi_dir</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">orig_mask</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">voxel_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orig_shape</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">mask_shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orig_threshold</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">mask_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask_threshold</span> <span class="o">=</span> <span class="n">mask_threshold</span>
+
+        <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span>
+             <span class="n">glob</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;*flirt.mat&#39;</span><span class="p">))]</span>
+
+<div class="viewcode-block" id="AverageRegionTransformer.fit"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.AverageRegionTransformer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Does nothing, but included to be used in sklearn&#39;s Pipeline. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="AverageRegionTransformer.transform"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.AverageRegionTransformer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Transforms features from X (voxels) to region-average features.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Numeric (float) array of shape = [n_samples, n_features]</span>
+<span class="sd">        y : Optional[List[str] or numpy ndarray[str]]</span>
+<span class="sd">            List of ndarray with strings indicating label-names</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_new : ndarray</span>
+<span class="sd">            array with transformed data of shape = [n_samples, n_features]</span>
+<span class="sd">            in which features are region-average values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">X_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask_list</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask_list</span><span class="p">):</span>
+
+            <span class="n">roi_idx</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_threshold</span>
+            <span class="n">overlap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orig_shape</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+            <span class="n">overlap</span><span class="p">[</span><span class="n">roi_idx</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">overlap</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">orig_mask</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">region_av</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="p">(</span><span class="n">overlap</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">orig_mask</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">X_new</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">region_av</span>
+
+        <span class="k">return</span> <span class="n">X_new</span></div></div>
+
+
+<div class="viewcode-block" id="ClusterThreshold"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.ClusterThreshold">[docs]</a><span class="k">class</span> <span class="nc">ClusterThreshold</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implements a cluster-based feature selection method.</span>
+<span class="sd">    This feature selection method performs a univariate feature selection</span>
+<span class="sd">    method to yield a set of voxels which are then cluster-thresholded using</span>
+<span class="sd">    a minimum (contiguous) cluster size. These clusters are then averaged to</span>
+<span class="sd">    yield a set of cluster-average features. This method is described in detail</span>
+<span class="sd">    in my master&#39;s thesis: github.com/lukassnoek/MSc_thesis.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    transformer : scikit-learn style transformer class</span>
+<span class="sd">        transformer class used to perform some kind of univariate feature</span>
+<span class="sd">        selection.</span>
+<span class="sd">    mvp : Mvp-object (see core.mvp)</span>
+<span class="sd">        Necessary to provide mask metadata (index, shape).</span>
+<span class="sd">    min_cluster_size : int</span>
+<span class="sd">        minimum cluster size to be set for cluster-thresholding</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mvp</span><span class="p">,</span> <span class="n">min_score</span><span class="p">,</span> <span class="n">selector</span><span class="o">=</span><span class="n">f_classif</span><span class="p">,</span>
+                 <span class="n">min_cluster_size</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_score</span> <span class="o">=</span> <span class="n">min_score</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selector</span> <span class="o">=</span> <span class="n">selector</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_cluster_size</span> <span class="o">=</span> <span class="n">min_cluster_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask_shape</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">mask_shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask_idx</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">voxel_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scores_</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cl_idx_</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_clust_</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="ClusterThreshold.fit"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.ClusterThreshold.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Fits ClusterThreshold transformer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Numeric (float) array of shape = [n_samples, n_features]</span>
+<span class="sd">        y : List[str] or numpy ndarray[str]</span>
+<span class="sd">            List of ndarray with floats corresponding to labels</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scores_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selector</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores_</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_score</span>
+
+        <span class="c1"># X_fs = univariate feature values in wholebrain space</span>
+        <span class="n">X_fs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask_shape</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">X_fs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask_idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores_</span>
+        <span class="n">X_fs</span> <span class="o">=</span> <span class="n">X_fs</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask_shape</span><span class="p">)</span>
+
+        <span class="n">clustered</span><span class="p">,</span> <span class="n">num_clust</span> <span class="o">=</span> <span class="n">label</span><span class="p">(</span><span class="n">X_fs</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_score</span><span class="p">)</span>
+        <span class="n">values</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">clustered</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">n_clust</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">counts</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_cluster_size</span><span class="p">)</span>
+
+        <span class="c1"># Sort and trim</span>
+        <span class="n">cluster_nrs</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">counts</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="n">n_clust</span><span class="p">]]</span>
+        <span class="n">cluster_nrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">cluster_nrs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># cl_idx holds indices per cluster</span>
+        <span class="n">cl_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster_nrs</span><span class="p">)))</span>
+
+        <span class="c1"># Update cl_idx until cluster-size &lt; cluster_min</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">clt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cluster_nrs</span><span class="p">):</span>
+            <span class="n">cl_idx</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">clustered</span> <span class="o">==</span> <span class="n">clt</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask_idx</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_clust_</span> <span class="o">=</span> <span class="n">cl_idx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cl_idx_</span> <span class="o">=</span> <span class="n">cl_idx</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="ClusterThreshold.transform"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.ClusterThreshold.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Transforms a pattern (X) given the indices calculated during fit().</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Numeric (float) array of shape = [n_samples, n_features]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_cl : ndarray</span>
+<span class="sd">            Transformed array of shape = [n_samples, n_clusters] given the</span>
+<span class="sd">            indices calculated during fit().</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># X_cl = clustered version of X</span>
+        <span class="n">X_cl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_clust_</span><span class="p">))</span>
+        <span class="n">n_clust</span> <span class="o">=</span> <span class="n">X_cl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_clust</span><span class="p">):</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cl_idx_</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="n">X_cl</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">X_cl</span></div></div>
+
+
+<div class="viewcode-block" id="PatternAverager"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.PatternAverager">[docs]</a><span class="k">class</span> <span class="nc">PatternAverager</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reduces the set of features to its average.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    method : str</span>
+<span class="sd">        method of averaging (either &#39;mean&#39; or &#39;median&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+
+<div class="viewcode-block" id="PatternAverager.fit"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.PatternAverager.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Does nothing, but included to be used in sklearn&#39;s Pipeline. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="PatternAverager.transform"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.PatternAverager.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Transforms patterns to its average.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Numeric (float) array of shape = [n_samples, n_features]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_new : ndarray</span>
+<span class="sd">            Transformed ndarray of shape = [n_samples, 1]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+            <span class="n">X_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;median&#39;</span><span class="p">:</span>
+            <span class="n">X_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid method: choose mean or median.&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">X_new</span></div></div>
+
+
+<div class="viewcode-block" id="PCAfilter"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.PCAfilter">[docs]</a><span class="k">class</span> <span class="nc">PCAfilter</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filters out a (set of) PCA component(s) and transforms it back to original</span>
+<span class="sd">    representation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_components : int</span>
+<span class="sd">        number of components to retain.</span>
+<span class="sd">    reject : list</span>
+<span class="sd">        Indices of components which should be additionally removed.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pca : scikit-learn PCA object</span>
+<span class="sd">        Fitted PCA object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">reject</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="n">n_components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reject</span> <span class="o">=</span> <span class="n">reject</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pca</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="PCAfilter.fit"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.PCAfilter.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Fits PcaFilter.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Numeric (float) array of shape = [n_samples, n_features]</span>
+<span class="sd">        y : List of str</span>
+<span class="sd">            List or ndarray with floats corresponding to labels</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_components</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">pca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pca</span> <span class="o">=</span> <span class="n">pca</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="PCAfilter.transform"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.PCAfilter.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Transforms a pattern (X) by the inverse PCA transform with removed</span>
+<span class="sd">        components.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Numeric (float) array of shape = [n_samples, n_features]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Transformed array of shape = [n_samples, n_features] given the</span>
+<span class="sd">            PCA calculated during fit().</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pca</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pca</span>
+        <span class="n">X_pca</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reject</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">to_reject</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">X_pca</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="n">to_reject</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">reject</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="n">X_rec</span> <span class="o">=</span> <span class="n">X_pca</span><span class="p">[:,</span> <span class="n">to_reject</span><span class="p">]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">pca</span><span class="o">.</span><span class="n">components_</span><span class="p">[</span><span class="n">to_reject</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">X_rec</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">X_pca</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">X_rec</span></div></div>
+
+
+<div class="viewcode-block" id="RoiIndexer"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.RoiIndexer">[docs]</a><span class="k">class</span> <span class="nc">RoiIndexer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Indexes a whole-brain pattern with a certain ROI.</span>
+<span class="sd">    Given a certain ROI-mask, this class allows transformation</span>
+<span class="sd">    from a whole-brain pattern to the mask-subset.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mvp : mvp-object (see scikit_bold.core)</span>
+<span class="sd">        Mvp-object, necessary to extract some pattern metadata</span>
+<span class="sd">    mask : str</span>
+<span class="sd">        Absolute paths to nifti-images of brain masks in MNI152 space.</span>
+<span class="sd">    mask_threshold : Optional[int, float]</span>
+<span class="sd">        Threshold to be applied on mask-indexing (given a probabilistic</span>
+<span class="sd">        mask).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mvp</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">mask_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mvp</span> <span class="o">=</span> <span class="n">mvp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask_threshold</span> <span class="o">=</span> <span class="n">mask_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orig_mask</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">voxel_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ref_space</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">ref_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="RoiIndexer.fit"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.RoiIndexer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Fits RoiIndexer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Numeric (float) array of shape = [n_samples, n_features]</span>
+<span class="sd">        y : List of str</span>
+<span class="sd">            List or ndarray with floats corresponding to labels</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Check if epi-mask already exists:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_space</span> <span class="o">==</span> <span class="s1">&#39;epi&#39;</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;L_&#39;</span><span class="p">,</span> <span class="s1">&#39;R_&#39;</span><span class="p">]:</span>
+                <span class="n">laterality</span> <span class="o">=</span> <span class="s1">&#39;unilateral&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">laterality</span> <span class="o">=</span> <span class="s1">&#39;bilateral&#39;</span>
+
+            <span class="n">epi_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mvp</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s1">&#39;epi_masks&#39;</span><span class="p">,</span> <span class="n">laterality</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">op</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">epi_dir</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">epi_dir</span><span class="p">)</span>
+
+            <span class="n">epi_name</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">)[:</span><span class="o">-</span><span class="mi">7</span><span class="p">]</span>
+            <span class="n">epi_exists</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">epi_dir</span><span class="p">,</span> <span class="s1">&#39;*</span><span class="si">%s</span><span class="s1">*.nii.gz&#39;</span> <span class="o">%</span> <span class="n">epi_name</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">epi_exists</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">epi_exists</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">reg_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mvp</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s1">&#39;reg&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">convert2epi</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">reg_dir</span><span class="p">,</span> <span class="n">epi_dir</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">roi_idx</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_threshold</span>
+        <span class="n">overlap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mvp</span><span class="o">.</span><span class="n">mask_shape</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">overlap</span><span class="p">[</span><span class="n">roi_idx</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">overlap</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">orig_mask</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span> <span class="o">=</span> <span class="p">(</span><span class="n">overlap</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">orig_mask</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="RoiIndexer.transform"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.RoiIndexer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Transforms features from X (voxels) to a mask-subset.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Numeric (float) array of shape = [n_samples, n_features]</span>
+<span class="sd">        y : Optional[List[str] or numpy ndarray[str]]</span>
+<span class="sd">            List of ndarray with strings indicating label-names</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_new : ndarray</span>
+<span class="sd">            array with transformed data of shape = [n_samples, n_features]</span>
+<span class="sd">            in which features are region-average values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">X_new</span></div></div>
+
+
+<div class="viewcode-block" id="RowIndexer"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.RowIndexer">[docs]</a><span class="k">class</span> <span class="nc">RowIndexer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects a subset of rows from an Mvp object.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    NOT a scikit-learn style transformer.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    idx : ndarray</span>
+<span class="sd">        Array with indices.</span>
+<span class="sd">    mvp : mvp-object</span>
+<span class="sd">        Mvp-object to drawn metadata from.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mvp</span><span class="p">,</span> <span class="n">train_idx</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">=</span> <span class="n">train_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mvp</span> <span class="o">=</span> <span class="n">mvp</span>
+
+<div class="viewcode-block" id="RowIndexer.transform"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.RowIndexer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        mvp : mvp-object</span>
+<span class="sd">            Indexed mvp-object.</span>
+<span class="sd">        X_not_selected : ndarray</span>
+<span class="sd">            Data which has not been selected.</span>
+<span class="sd">        y_not_selected : ndarray</span>
+<span class="sd">            Labels which have not been selected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mvp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mvp</span>
+        <span class="n">selection</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">mvp</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">selection</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">X_not_selected</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="o">~</span><span class="n">selection</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">y_not_selected</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="o">~</span><span class="n">selection</span><span class="p">]</span>
+        <span class="n">mvp</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">selection</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">mvp</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">selection</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">mvp</span><span class="p">,</span> <span class="n">X_not_selected</span><span class="p">,</span> <span class="n">y_not_selected</span></div></div>
+
+
+<div class="viewcode-block" id="SelectFeatureset"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.SelectFeatureset">[docs]</a><span class="k">class</span> <span class="nc">SelectFeatureset</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects only columns of a certain featureset.</span>
+<span class="sd">    CANNOT be used in a scikit-learn pipeline!</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mvp : mvp-object</span>
+<span class="sd">        Used to extract meta-data.</span>
+<span class="sd">    featureset_idx : ndarray</span>
+<span class="sd">        Array with indices which map to unique feature-set voxels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mvp</span><span class="p">,</span> <span class="n">featureset_idx</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mvp</span> <span class="o">=</span> <span class="n">mvp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">featureset_idx</span> <span class="o">=</span> <span class="n">featureset_idx</span>
+
+<div class="viewcode-block" id="SelectFeatureset.fit"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.SelectFeatureset.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Does nothing, but included due to scikit-learn API. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="SelectFeatureset.transform"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.SelectFeatureset.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Transforms mvp. &quot;&quot;&quot;</span>
+
+        <span class="n">mvp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mvp</span>
+        <span class="n">fids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">mvp</span><span class="o">.</span><span class="n">featureset_id</span><span class="p">)</span>
+        <span class="n">col_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">mvp</span><span class="o">.</span><span class="n">featureset_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">featureset_idx</span><span class="p">)</span>
+        <span class="n">pos_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">col_idx</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pos_idx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Found more than one positional index when selecting &quot;</span>
+                   <span class="s2">&quot;feature-set </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">featureset_idx</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">pos_idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Didn&#39;t find a feature-set with id &#39;</span><span class="si">%i</span><span class="s2">&#39;.&quot;</span>
+                   <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">featureset_idx</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pos_idx</span> <span class="o">=</span> <span class="n">pos_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">mvp</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="n">col_idx</span><span class="p">]</span>
+        <span class="n">mvp</span><span class="o">.</span><span class="n">voxel_idx</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">voxel_idx</span><span class="p">[</span><span class="n">col_idx</span><span class="p">]</span>
+        <span class="n">mvp</span><span class="o">.</span><span class="n">featureset_id</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">featureset_id</span><span class="p">[</span><span class="n">col_idx</span><span class="p">]</span>
+        <span class="n">mvp</span><span class="o">.</span><span class="n">featureset_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">mvp</span><span class="o">.</span><span class="n">featureset_id</span><span class="p">)</span>
+        <span class="n">mvp</span><span class="o">.</span><span class="n">data_shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">mvp</span><span class="o">.</span><span class="n">data_shape</span><span class="p">[</span><span class="n">pos_idx</span><span class="p">]]</span>
+        <span class="n">mvp</span><span class="o">.</span><span class="n">data_name</span> <span class="o">=</span> <span class="p">[</span><span class="n">mvp</span><span class="o">.</span><span class="n">data_name</span><span class="p">[</span><span class="n">pos_idx</span><span class="p">]]</span>
+        <span class="n">mvp</span><span class="o">.</span><span class="n">affine</span> <span class="o">=</span> <span class="p">[</span><span class="n">mvp</span><span class="o">.</span><span class="n">affine</span><span class="p">[</span><span class="n">pos_idx</span><span class="p">]]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mvp</span> <span class="o">=</span> <span class="n">mvp</span>
+        <span class="k">return</span> <span class="n">mvp</span></div></div>
+
+
+<div class="viewcode-block" id="IncrementalFeatureCombiner"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.IncrementalFeatureCombiner">[docs]</a><span class="k">class</span> <span class="nc">IncrementalFeatureCombiner</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Indexes a set of features with a number of (sorted) features.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scores : ndarray</span>
+<span class="sd">        Array of shape = n_features, or [n_features, n_class] in case of</span>
+<span class="sd">        soft/hard voting in, e.g., a roi_stacking_classifier</span>
+<span class="sd">        (see classifiers.roi_stacking_classifier).</span>
+<span class="sd">    cutoff : int or float</span>
+<span class="sd">        If int, it refers the absolute number of features included, sorted</span>
+<span class="sd">        from high to low (w.r.t. scores). If float, it selects a proportion</span>
+<span class="sd">        of features.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scores</span> <span class="o">=</span> <span class="n">scores</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cutoff</span> <span class="o">=</span> <span class="n">cutoff</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="IncrementalFeatureCombiner.fit"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.IncrementalFeatureCombiner.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Fits IncrementalFeatureCombiner transformer.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Numeric (float) array of shape = [n_samples, n_features]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutoff</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">mean_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mean_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores</span>
+
+            <span class="n">best</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">mean_scores</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">cutoff</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">mean_scores</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span><span class="p">[</span><span class="n">best</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutoff</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="IncrementalFeatureCombiner.transform"><a class="viewcode-back" href="../../../source/skbold.feature_extraction.transformers.html#skbold.feature_extraction.IncrementalFeatureCombiner.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Transforms a pattern (X) given the indices calculated during fit().</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Numeric (float) array of shape = [n_samples, n_features]</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X : ndarray</span>
+<span class="sd">            Transformed array of shape = [n_samples, n_features] given the</span>
+<span class="sd">            indices calculated during fit().</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">n_class</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span><span class="o">.</span><span class="n">size</span>
+            <span class="n">X_tmp</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n_class</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+            <span class="n">X_tmp</span> <span class="o">=</span> <span class="n">X_tmp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">X_tmp</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">X_tmp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:])))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">X</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_</span><span class="p">]</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Lukas Snoek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

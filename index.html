@@ -1,0 +1,492 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skbold - utilities and tools for machine learning on BOLD-fMRI data &mdash; skbold 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="skbold 0.1 documentation" href="#"/>
+        <link rel="next" title="skbold - utilities and tools for machine learning on BOLD-fMRI data" href="README_link.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> skbold
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="README_link.html">skbold - utilities and tools for machine learning on BOLD-fMRI data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/skbold.html">skbold package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">skbold</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>skbold - utilities and tools for machine learning on BOLD-fMRI data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="skbold-utilities-and-tools-for-machine-learning-on-bold-fmri-data">
+<h1>skbold - utilities and tools for machine learning on BOLD-fMRI data<a class="headerlink" href="#skbold-utilities-and-tools-for-machine-learning-on-bold-fmri-data" title="Permalink to this headline">¶</a></h1>
+<a class="reference external image-reference" href="https://travis-ci.org/lukassnoek/skbold"><img alt="https://travis-ci.org/lukassnoek/skbold.svg?branch=master" src="https://travis-ci.org/lukassnoek/skbold.svg?branch=master" /></a>
+<a class="reference external image-reference" href="http://skbold.readthedocs.io/en/latest/?badge=latest"><img alt="Documentation Status" src="https://readthedocs.org/projects/skbold/badge/?version=latest" /></a>
+<a class="reference external image-reference" href="https://coveralls.io/github/lukassnoek/skbold?branch=develop"><img alt="https://coveralls.io/repos/github/lukassnoek/skbold/badge.svg?branch=develop" src="https://coveralls.io/repos/github/lukassnoek/skbold/badge.svg?branch=develop" /></a>
+<a class="reference external image-reference" href="https://www.python.org/dev/peps/pep-0008"><img alt="https://img.shields.io/badge/code%20style-pep8-orange.svg" src="https://img.shields.io/badge/code%20style-pep8-orange.svg" /></a>
+<a class="reference external image-reference" href="https://www.python.org/download/releases/2.7"><img alt="https://img.shields.io/badge/python-2.7-blue.svg" src="https://img.shields.io/badge/python-2.7-blue.svg" /></a>
+<a class="reference external image-reference" href="https://www.python.org/downloads/release/python-350"><img alt="https://img.shields.io/badge/python-3.5-blue.svg" src="https://img.shields.io/badge/python-3.5-blue.svg" /></a>
+<p>The Python package <code class="docutils literal"><span class="pre">skbold</span></code> offers a set of tools and utilities for
+machine learning and RSA-type analyses of functional MRI (BOLD-fMRI) data.
+Instead of (largely) reinventing the wheel, this package builds upon an existing
+machine learning framework in Python: <a class="reference external" href="http://scikit-learn.org/">scikit-learn</a>.
+Specifically, it offers a module with scikit-learn-style &#8216;transformers&#8217; (with
+the corresponding scikit-learn API) and some (experimental) scikit-learn
+type estimators.</p>
+<p>Next to these transformer- and estimator-functionalities, <code class="docutils literal"><span class="pre">skbold</span></code> offers
+a new data-structure, the <code class="docutils literal"><span class="pre">Mvp</span></code> (Multivoxel pattern), that allows for an
+efficient way to store and access data and metadata necessary for multivoxel
+analyses of fMRI data. A novel feature of this data-structure is that it is
+able to easily load data from <a class="reference external" href="http://fsl.fmrib.ox.ac.uk/fsl">FSL</a>-FEAT output
+directories. As the <code class="docutils literal"><span class="pre">Mvp</span></code> object is available in two &#8216;options&#8217;, they are
+explained in more detail below.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is a test.</p>
+</div>
+<div class="section" id="mvp-objects">
+<h2>Mvp-objects<a class="headerlink" href="#mvp-objects" title="Permalink to this headline">¶</a></h2>
+<p>At the core, an <code class="docutils literal"><span class="pre">Mvp</span></code>-object is simply a collection of data - a 2D array
+of samples by features - and fMRI-specific metadata necessary to perform
+customized preprocessing and feature engineering. However, machine learning
+analyses, or more generally any type of multivoxel-type analysis (i.e. MVPA),
+can be done in two basic ways.</p>
+<div class="section" id="mvpwithin">
+<h3>MvpWithin<a class="headerlink" href="#mvpwithin" title="Permalink to this headline">¶</a></h3>
+<p>One way is to perform analyses <em>within subjects</em>. This means that a model is
+fit on each subjects&#8217; data separately. Data, in this context, often refers to
+single-trial data, in which each trial comprises a sample in our data-matrix and
+the values per voxel constitute our features. This type of analysis is
+alternatively called <em>single-trial decoding</em>, and is often performed as an
+alternative to massively (whole-brain) univariate analysis.</p>
+<img alt="_images/MvpWithin.png" class="align-center" src="_images/MvpWithin.png" />
+<p>Ultimately, this type of analysis aims to predict some kind of attribute of the
+trials (for example condition/class membership in classification analyses or some
+continuous feature in regression analyses). Ultimately, group-analyses may
+be done on subject-specific analysis metrics (such as classification accuracy
+or R2-score) and group-level feature-importance maps may be calculated to
+draw conclusions about the model&#8217;s predictive power and the spatial
+distribution of informative features, respectively.</p>
+</div>
+<div class="section" id="mvpbetween">
+<h3>MvpBetween<a class="headerlink" href="#mvpbetween" title="Permalink to this headline">¶</a></h3>
+<p>With the apparent increase in large-sample neuroimaging datasets, another
+type of analysis starts to become feasible, which we&#8217;ll call <em>between subject</em>
+analyses. In this type of analysis, single subjects constitute the data&#8217;s
+samples and a corresponding single multivoxel pattern constitutes the data&#8217;s
+features. The type of multivoxel pattern, or &#8216;feature-set&#8217;, can be any set
+of voxel values. For example, features from a single first-level contrast
+(note: this should be a condition average contrast, as opposed to single-trial
+contrasts in MvpWithin!) can be used. But voxel patterns from VBM, TBSS (DTI),
+and dual-regression maps can equally well be used. Crucially, this package
+allows for the possibility to stack feature-sets such that models can be fit
+on features from multiple data-types simultaneously.</p>
+<img alt="_images/MvpBetween.png" src="_images/MvpBetween.png" />
+</div>
+</div>
+<div class="section" id="mvpresults-model-evaluation-and-feature-visualization">
+<h2>MvpResults: model evaluation and feature visualization<a class="headerlink" href="#mvpresults-model-evaluation-and-feature-visualization" title="Permalink to this headline">¶</a></h2>
+<p>Given that an appropriate <code class="docutils literal"><span class="pre">Mvp</span></code>-object exists, it is really easy to
+implement a machine learning analysis using standard <em>scikit-learn</em>
+modules. However, as fMRI datasets are often relatively small, K-fold
+cross-validation is often performed to keep the training-set as large as
+possible. Additionally, it might be informative to visualize which features
+are used and are most important in your model. (But, note that feature mapping
+should not be the main objective of decoding analyses!) Doing this - model
+evaluation and feature visualization across multiple folds - complicates the
+process of implementing machine learning pipelines on fMRI data.</p>
+<p>The <code class="docutils literal"><span class="pre">MvpResults</span></code> object offers a solution to the above complications. Simply
+pass your scikit-learn pipeline to MvpResults after every fold and it
+automatically calculates a set of model evaluation metrics (accuracy,
+precision, recall, etc.) and keeps track of which features are used and how
+&#8216;important&#8217; these features are (in terms of the value of their weights).</p>
+</div>
+<div class="section" id="transformers-fmri-feature-selection-and-extraction">
+<h2>Transformers: fMRI feature selection and extraction<a class="headerlink" href="#transformers-fmri-feature-selection-and-extraction" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">transformers</span></code> module in skbold contains a set of scikit-learn type
+transformers that can perform various types of feature selection and
+extraction specific to multivoxel fMRI-data. For example, the RoiIndexer-
+transformer takes a (partially masked) whole-brain pattern and indexes it with
+a specific region-of-interest defined in a nifti-file. The transformer API
+conforms to scikit-learn transformers, and as such, (almost all of them) can be
+used in scikit-learn pipelines.</p>
+<p>To get a better idea of the package&#8217;s functionality - including the use of
+Mvp-objects, transformers, and MvpResults - a typical analysis workflow using
+<code class="docutils literal"><span class="pre">skbold</span></code> is described below.</p>
+</div>
+<div class="section" id="an-example-workflow-mvpwithin">
+<h2>An example workflow: MvpWithin<a class="headerlink" href="#an-example-workflow-mvpwithin" title="Permalink to this headline">¶</a></h2>
+<p>Suppose you have data from an fMRI-experiment for a set of subjects who were
+presented with images which were either emotional or neutral in terms of their
+content. You&#8217;ve modelled them using a single-trial GLM (i.e. each trial is
+modelled as a separate event/regressor) and calculated their corresponding
+contrasts against baseline. The resulting FEAT-directory then contains
+a directory (&#8216;stats&#8217;) with contrast-estimates (COPEs) for each trial. Now,
+using MvpWithin, it is easy to extract a sample by features matrix and some
+meta-data associated with it, as shown below.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skbold.data2mvp</span> <span class="k">import</span> <span class="n">MvpWithin</span>
+
+<span class="n">feat_dir</span> <span class="o">=</span> <span class="s1">&#39;~/project/sub001.feat&#39;</span>
+<span class="n">mask_file</span> <span class="o">=</span> <span class="s1">&#39;~/GrayMatterMask.nii.gz&#39;</span> <span class="c1"># mask all non-gray matter!</span>
+<span class="n">read_labels</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># parse labels (targets) from design.con file!</span>
+<span class="n">remove_contrast</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;nuisance_regressor_x&#39;</span><span class="p">]</span> <span class="c1"># do not load nuisance regressor!</span>
+<span class="n">ref_space</span> <span class="o">=</span> <span class="s1">&#39;epi&#39;</span> <span class="c1"># extract patterns in functional space (alternatively: &#39;mni&#39;)</span>
+<span class="n">beta2tstat</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># convert beta-estimates of COPEs to tstats</span>
+<span class="n">remove_zeros</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># remove voxels which are zero in each trial</span>
+
+<span class="n">mvp</span> <span class="o">=</span> <span class="n">MvpWithin</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">feat_dir</span><span class="p">,</span> <span class="n">read_labels</span><span class="o">=</span><span class="n">read_labels</span><span class="p">,</span>
+                <span class="n">remove_contrast</span><span class="o">=</span><span class="n">remove_contrast</span><span class="p">,</span> <span class="n">ref_space</span><span class="o">=</span><span class="n">ref_space</span><span class="p">,</span>
+                <span class="n">beta2tstat</span><span class="o">=</span><span class="n">beta2tstat</span><span class="p">,</span> <span class="n">remove_zeros</span><span class="o">=</span><span class="n">remove_zeros</span><span class="p">,</span>
+                <span class="n">mask</span><span class="o">=</span><span class="n">mask_file</span><span class="p">)</span>
+
+<span class="n">mvp</span><span class="o">.</span><span class="n">create</span><span class="p">()</span> <span class="c1"># extracts and stores (meta)data from FEAT-directory!</span>
+<span class="n">mvp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;~/&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mvp_sub001&#39;</span><span class="p">)</span> <span class="c1"># saves to disk!</span>
+</pre></div>
+</div>
+<p>Now, we have an Mvp-object on which machine learning pipeline can be applied:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">joblib</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="k">import</span> <span class="n">SVC</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.cross_validation</span> <span class="k">import</span> <span class="n">StratifiedKFold</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="k">import</span> <span class="n">f_classif</span><span class="p">,</span> <span class="n">SelectKBest</span>
+<span class="kn">from</span> <span class="nn">skbold.transformers</span> <span class="k">import</span> <span class="n">RoiIndexer</span>
+<span class="kn">from</span> <span class="nn">skbold.utils</span> <span class="k">import</span> <span class="n">MvpResultsClassification</span>
+
+<span class="n">mvp</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;~/mvp_sub001.jl&#39;</span><span class="p">)</span>
+
+<span class="n">pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s1">&#39;roiindex&#39;</span><span class="p">,</span> <span class="n">RoiIndexer</span><span class="p">(</span><span class="n">mvp</span><span class="o">=</span><span class="n">mvp</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="s1">&#39;~/amygdala_mask.nii.gz&#39;</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;anova&#39;</span><span class="p">,</span> <span class="n">SelectKBest</span><span class="p">(</span><span class="n">f_classif</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">100</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">&#39;svm&#39;</span><span class="p">,</span> <span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">))</span>
+<span class="p">])</span>
+
+<span class="n">cv</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">mvp</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># Initialization of MvpResults; &#39;coef&#39; indicates keeping track of weights!</span>
+<span class="n">mvp_results</span> <span class="o">=</span> <span class="n">MvpResultsClassification</span><span class="p">(</span><span class="n">mvp</span><span class="o">=</span><span class="n">mvp</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">cv</span><span class="p">),</span>
+                                       <span class="n">out_path</span><span class="o">=</span><span class="s1">&#39;~/&#39;</span><span class="p">,</span> <span class="n">feature_scoring</span><span class="o">=</span><span class="s1">&#39;coef&#39;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">train_idx</span><span class="p">,</span> <span class="n">test_idx</span> <span class="ow">in</span> <span class="n">cv</span><span class="p">:</span>
+
+    <span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">train_idx</span><span class="p">,</span> <span class="p">:],</span> <span class="n">mvp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">test_idx</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">train_y</span><span class="p">,</span> <span class="n">test_y</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">train_idx</span><span class="p">],</span> <span class="n">mvp</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">train_idx</span><span class="p">]</span>
+
+    <span class="n">pipe</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">train_y</span><span class="p">)</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
+    <span class="n">mvp_results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">test_idx</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">pipe</span><span class="p">)</span> <span class="c1"># update after each fold!</span>
+
+<span class="n">mvp_results</span><span class="o">.</span><span class="n">compute_scores</span><span class="p">()</span> <span class="c1"># compute!</span>
+<span class="n">mvp_results</span><span class="o">.</span><span class="n">write</span><span class="p">()</span> <span class="c1"># write file with metrics and niftis with feature-scores!</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="an-example-workflow-mvpbetween">
+<h2>An example workflow: MvpBetween<a class="headerlink" href="#an-example-workflow-mvpbetween" title="Permalink to this headline">¶</a></h2>
+<p>Suppose you have MRI data from a large set of subjects (let&#8217;s say &gt;50),
+including (task-based) functional MRI, structural MRI (T1-weighted images,
+DTI), and behavioral data (e.g. questionnaires, behavioral tasks). Such a
+dataset would qualify for a <em>between subject</em> decoding analysis using the
+MvpBetween object. To use the MvpBetween functionality effectively, it is
+important that the data is organized sensibly. An example is given below.</p>
+<img alt="_images/MvpBetween_dirstructure.png" src="_images/MvpBetween_dirstructure.png" />
+<p>In this example, each subject has three different data-sources: two FEAT-
+directories (with functional contrasts) and one VBM-file. Let&#8217;s say that we&#8217;d
+like to use all of these sources of information together to predict some
+behavioral variable, neuroticism for example (as measured with e.g. the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Revised_NEO_Personality_Inventory">NEO-FFI</a>). The most important argument passed to MvpBetween is <code class="docutils literal"><span class="pre">source</span></code>.
+This variable, a dictionary, should contain the data-types you want to extract
+and their corresponding paths (with wildcards at the place of subject-specific
+parts):</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">skbold</span> <span class="k">import</span> <span class="n">roidata_path</span>
+<span class="n">gm_mask</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">roidata_path</span><span class="p">,</span> <span class="s1">&#39;GrayMatter.nii.gz&#39;</span><span class="p">)</span>
+
+<span class="n">source</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">source</span><span class="p">[</span><span class="s1">&#39;Contrast_t1cope1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="s1">&#39;~/Project_dir/sub*/Task1.feat/cope1.nii.gz&#39;</span><span class="p">}</span>
+<span class="n">source</span><span class="p">[</span><span class="s1">&#39;Contrast_t2cope2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="s1">&#39;~/Project_dir/sub*/Task2.feat/cope2.nii.gz&#39;</span><span class="p">}</span>
+<span class="n">source</span><span class="p">[</span><span class="s1">&#39;VBM&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="s1">&#39;~/Project_dir/sub*/vbm.nii.gz&#39;</span><span class="p">,</span> <span class="s1">&#39;mask&#39;</span><span class="p">:</span> <span class="n">gm_mask</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Now, to initialize the MvpBetween object, we need some more info:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skbold.data2mvp</span> <span class="k">import</span> <span class="n">MvpBetween</span>
+
+<span class="n">subject_idf</span><span class="o">=</span><span class="s1">&#39;sub-0??&#39;</span> <span class="c1"># this is needed to extract the subject names to</span>
+                      <span class="c1"># cross-reference across data-sources</span>
+<span class="n">subject_list</span><span class="o">=</span><span class="kc">None</span>     <span class="c1"># can be a list of subject-names to include</span>
+
+<span class="n">mvp</span> <span class="o">=</span> <span class="n">MvpBetween</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span> <span class="n">subject_idf</span><span class="o">=</span><span class="n">subject_idf</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">subject_list</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+<span class="c1"># like with MvpWithin, you can simply call create() to start the extraction!</span>
+<span class="n">mvp</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+
+<span class="c1"># and write to disk using write()</span>
+<span class="n">mvp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;~/&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mvp_between&#39;</span><span class="p">)</span> <span class="c1"># saves to disk!</span>
+</pre></div>
+</div>
+<p>This is basically all you need to create a MvpBetween object! It is very
+similar to MvpWithin in terms of attributes (including <code class="docutils literal"><span class="pre">X</span></code>, <code class="docutils literal"><span class="pre">y</span></code>, and
+various meta-data attributes). In fact, MvpResults works exactly in the same
+way for MvpWithin and MvpBetween! The major difference is that MvpResults
+keeps track of the feature-information for each feature-set separately and
+writes out a summarizing nifti file for each feature-set. Transformers also
+work the same for MvpBetween objects/data, with the exception of the
+cluster-threshold transformer.</p>
+</div>
+<div class="section" id="installing-skbold">
+<h2>Installing skbold<a class="headerlink" href="#installing-skbold" title="Permalink to this headline">¶</a></h2>
+<p>Although the package is very much in development, it can be installed using <em>pip</em>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ pip install skbold
+</pre></div>
+</div>
+<p>However, the pip-version is likely behind compared to the code on Github, so to get the
+most up to date version, use git:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ pip install git+https://github.com/lukassnoek/skbold.git@master
+</pre></div>
+</div>
+<p>Or, alternatively, download the package as a zip-file from Github, unzip, and run:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python setup.py install
+</pre></div>
+</div>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>For those reading this on Github, documentation can be found on <a class="reference external" href="http://skbold.readthedocs.io/">readthedocs.org</a>!</p>
+</div>
+<div class="section" id="credits">
+<h2>Credits<a class="headerlink" href="#credits" title="Permalink to this headline">¶</a></h2>
+<p>When I started writingthis package, I knew next to nothing about Python
+programming in general and packaging in specific. The <a class="reference external" href="https://github.com/rasbt/mlxtend">mlxtend</a> package has been
+a great &#8216;template&#8217; and helped a great deal in structuring the current package.
+Also, <a class="reference external" href="https://github.com/StevenM1">Steven</a> has contributed some very nice features as part of his internship.
+Lastly, <a class="reference external" href="https://github.com/y0ast">Joost</a> has beena major help in virtually every single phase of this
+package!</p>
+</div>
+<div class="section" id="license-and-contact">
+<h2>License and contact<a class="headerlink" href="#license-and-contact" title="Permalink to this headline">¶</a></h2>
+<p>The code is BSD (3-clause) licensed. You can find my contact details at my
+<a class="reference external" href="https://github.com/lukassnoek">Github</a> profile page.</p>
+</div>
+</div>
+<div class="section" id="code-documentation">
+<h1>Code documentation:<a class="headerlink" href="#code-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README_link.html">skbold - utilities and tools for machine learning on BOLD-fMRI data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/skbold.html">skbold package</a></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="README_link.html" class="btn btn-neutral float-right" title="skbold - utilities and tools for machine learning on BOLD-fMRI data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Lukas Snoek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

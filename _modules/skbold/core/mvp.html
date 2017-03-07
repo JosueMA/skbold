@@ -1,0 +1,402 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skbold.core.mvp &mdash; skbold 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="skbold 0.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> skbold
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README_link.html">skbold - utilities and tools for machine learning on BOLD-fMRI data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/skbold.html">skbold package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">skbold</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>skbold.core.mvp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for skbold.core.mvp</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Basic Mvp class, from which first-level specific (e.g. FSL or, perhaps in the</span>
+<span class="c1"># future, SPM) containers/converters are subclassed.</span>
+
+<span class="c1"># Author: Lukas Snoek [lukassnoek.github.io]</span>
+<span class="c1"># Contact: lukassnoek@gmail.com</span>
+<span class="c1"># License: 3 clause BSD</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nib</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">op</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">sklearn.externals</span> <span class="k">import</span> <span class="n">joblib</span>
+
+
+<div class="viewcode-block" id="Mvp"><a class="viewcode-back" href="../../../source/skbold.core.mvp.html#skbold.core.Mvp">[docs]</a><span class="k">class</span> <span class="nc">Mvp</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Mvp (multiVoxel Pattern) class.</span>
+<span class="sd">    Creates an object, specialized for storing fMRI data that will be analyzed</span>
+<span class="sd">    using machine learning or RSA-like analyses, that stores both the data</span>
+<span class="sd">    (X: an array of samples by features, y: numeric labels corresponding to</span>
+<span class="sd">    X&#39;s classes/conditions) and the corresponding meta-data (e.g. nifti header,</span>
+<span class="sd">    mask info, etc.).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : ndarray</span>
+<span class="sd">        A 2D numpy-array with rows indicating samples and</span>
+<span class="sd">        columns indicating features.</span>
+<span class="sd">    y : list or ndarray</span>
+<span class="sd">        Array/list with labels/targets corresponding to samples in X.</span>
+<span class="sd">    mask : str</span>
+<span class="sd">        Absolute path to nifti-file that will mask (index) the patterns.</span>
+<span class="sd">    mask_thres : int or float</span>
+<span class="sd">        Minimum value for mask (in cases of probabilistic masks).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mask_shape : tuple</span>
+<span class="sd">        Shape of mask that patterns will be indexed with.</span>
+<span class="sd">    nifti_header : Nifti1Header object</span>
+<span class="sd">        Nifti-header from corresponding mask.</span>
+<span class="sd">    affine : ndarray</span>
+<span class="sd">        Affine corresponding to nifti-mask.</span>
+<span class="sd">    voxel_idx : ndarray</span>
+<span class="sd">        Array with integer-indices indicating which voxels are used in the</span>
+<span class="sd">        patterns relative to whole-brain space. In other words, it allows to</span>
+<span class="sd">        map back the patterns to a whole-brain orientation.</span>
+<span class="sd">    X : ndarray</span>
+<span class="sd">        The actual patterns (2D: samples X features)</span>
+<span class="sd">    y : list or ndarray</span>
+<span class="sd">        Array/list with labels/targets corresponding to samples in X.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This class is mainly meant to serve as a parent-class for ``MvpWithin``</span>
+<span class="sd">    and ``MvpBetween``, but it can alternatively be used as an object to store</span>
+<span class="sd">    a &#39;custom&#39; multivariate-pattern set with meta-data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask_thres</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;You can only pass one mask! To use custom masks for each &#39;</span> \
+                  <span class="s1">&#39;source entry, specify the mask-key in source.&#39;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">common_mask</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">maskl</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">common_mask</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="n">mask_thres</span><span class="p">,</span>
+                                <span class="s1">&#39;idx&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">maskl</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">mask_thres</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+                                <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="n">maskl</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s1">&#39;affine&#39;</span><span class="p">:</span> <span class="n">maskl</span><span class="o">.</span><span class="n">affine</span><span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nifti_header</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">affine</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voxel_idx</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+
+<div class="viewcode-block" id="Mvp.write"><a class="viewcode-back" href="../../../source/skbold.core.mvp.html#skbold.core.Mvp.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mvp&#39;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;joblib&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Writes the Mvp-object to disk.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Absolute path where the file will be written to.</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Name of to-be-written file.</span>
+<span class="sd">        backend : str</span>
+<span class="sd">            Which format will be used to save the files. Default is &#39;joblib&#39;,</span>
+<span class="sd">            which conveniently saves the Mvp-object as one file. Alternatively,</span>
+<span class="sd">            and if the Mvp-object is too large to be save with joblib, a</span>
+<span class="sd">            data-header format will be used, in which the data (``X``) will be</span>
+<span class="sd">            saved using Numpy and the meta-data (everythin except ``X``) will</span>
+<span class="sd">            be saved using joblib.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saving file &#39;</span><span class="si">%s</span><span class="s2">&#39; to disk.&quot;</span> <span class="o">%</span> <span class="n">fn</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;joblib&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span> <span class="o">+</span> <span class="s1">&#39;.jl&#39;</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Array too large to save with joblib; using Numpy ... &quot;</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">backend</span> <span class="o">=</span> <span class="s1">&#39;numpy&#39;</span>
+                <span class="n">to_remove</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;*npy.z&#39;</span><span class="p">))</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">to_remove</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;numpy&#39;</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">fn</span> <span class="o">+</span> <span class="s1">&#39;_data.npy&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span> <span class="o">+</span> <span class="s1">&#39;_header.jl&#39;</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Mvp.update_mask"><a class="viewcode-back" href="../../../source/skbold.core.mvp.html#skbold.core.Mvp.update_mask">[docs]</a>    <span class="k">def</span> <span class="nf">update_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="c1"># For external use</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">unicode</span><span class="p">)):</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">threshold</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">threshold</span> <span class="o">=</span> <span class="p">[</span><span class="n">threshold</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">unicode</span><span class="p">))</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mask</span><span class="p">):</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="p">[</span><span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">copy</span><span class="p">(</span><span class="n">m</span><span class="p">))</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mask</span><span class="p">)]</span>
+
+            <span class="n">to_iterate</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">copy</span><span class="p">(</span><span class="n">mask</span><span class="p">),</span> <span class="n">copy</span><span class="p">(</span><span class="n">threshold</span><span class="p">),</span>
+                             <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">featureset_id</span><span class="p">))</span>
+            <span class="n">unpack</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">to_iterate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">featureset_id</span><span class="p">)</span>
+            <span class="n">unpack</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">to_iterate</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">unpack</span><span class="p">:</span>
+                <span class="n">mask</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">it</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">it</span>
+
+            <span class="n">fids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">featureset_id</span><span class="p">)</span>
+            <span class="n">posidx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">fids</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_shape</span><span class="p">[</span><span class="n">posidx</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+            <span class="n">fidx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">featureset_id</span> <span class="o">==</span> <span class="n">i</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">voxel_idx</span><span class="p">[</span><span class="n">fidx</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="n">mask</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">tmp</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">voxel_idx</span><span class="p">[</span><span class="n">fidx</span><span class="p">]])</span>
+
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="n">indices</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">featureset_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">featureset_id</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voxel_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">voxel_idx</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">_update_mask_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+        <span class="c1"># Only for internal use</span>
+        <span class="c1"># Is still still necessary?</span>
+        <span class="n">mask_vol</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+        <span class="n">mask_idx</span> <span class="o">=</span> <span class="n">mask_vol</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">affine</span> <span class="o">=</span> <span class="n">mask_vol</span><span class="o">.</span><span class="n">affine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nifti_header</span> <span class="o">=</span> <span class="n">mask_vol</span><span class="o">.</span><span class="n">header</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask_shape</span> <span class="o">=</span> <span class="n">mask_vol</span><span class="o">.</span><span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voxel_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask_shape</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voxel_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">voxel_idx</span><span class="p">[</span><span class="n">mask_idx</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Lukas Snoek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

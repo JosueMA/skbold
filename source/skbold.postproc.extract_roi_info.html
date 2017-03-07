@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skbold.postproc.extract_roi_info module &mdash; skbold 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="skbold 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="skbold.postproc package" href="skbold.postproc.html"/>
+        <link rel="next" title="skbold.postproc.mvp_results module" href="skbold.postproc.mvp_results.html"/>
+        <link rel="prev" title="skbold.postproc package" href="skbold.postproc.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> skbold
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../README_link.html">skbold - utilities and tools for machine learning on BOLD-fMRI data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="skbold.html">skbold package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="skbold.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="skbold.core.html">skbold.core package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.estimators.html">skbold.estimators package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.exp_model.html">skbold.exp_model package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.feature_extraction.html">skbold.feature_extraction package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.feature_selection.html">skbold.feature_selection package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.pipelines.html">skbold.pipelines package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="skbold.postproc.html">skbold.postproc package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="skbold.postproc.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.preproc.html">skbold.preproc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.utils.html">skbold.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">skbold</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="skbold.html">skbold package</a> &raquo;</li>
+        
+          <li><a href="skbold.postproc.html">skbold.postproc package</a> &raquo;</li>
+        
+      <li>skbold.postproc.extract_roi_info module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/skbold.postproc.extract_roi_info.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-skbold.postproc.extract_roi_info">
+<span id="skbold-postproc-extract-roi-info-module"></span><h1>skbold.postproc.extract_roi_info module<a class="headerlink" href="#module-skbold.postproc.extract_roi_info" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="skbold.postproc.extract_roi_info.extract_roi_info">
+<code class="descname">extract_roi_info</code><span class="sig-paren">(</span><em>statfile</em>, <em>roi_type='unilateral'</em>, <em>per_cluster=True</em>, <em>cluster_engine='scipy'</em>, <em>min_clust_size=20</em>, <em>stat_threshold=None</em>, <em>mask_threshold=20</em>, <em>save_indices=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/postproc/extract_roi_info.html#extract_roi_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.postproc.extract_roi_info.extract_roi_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts information per ROI for a given statistics-file.
+Reads in a thresholded (!) statistics-file (such as a thresholded z- or
+t-stat from a FSL first-level directory) and calculates for a set of ROIs
+the number of significant voxels included and its maximum value
+(+ coordinates). Saves a csv-file in the same directory as the
+statistics-file. Assumes that the statistics file is in MNI152 2mm space.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>statfile</strong> (<em>str</em>) &#8211; Absolute path to statistics-file (nifti) that needs to be evaluated.</li>
+<li><strong>roi_type</strong> (<em>str</em>) &#8211; Whether to  use unilateral or bilateral masks (thus far, only Harvard-
+Oxford atlas masks are supported.)</li>
+<li><strong>per_cluster</strong> (<em>bool</em>) &#8211; Whether to evaluate the statistics-file as a whole (per_cluster=False)
+or per cluster separately (per_cluster=True).</li>
+<li><strong>cluster_engine</strong> (<em>str</em>) &#8211; Which &#8216;engine&#8217; to use for clustering; can be &#8216;scipy&#8217; (default), using
+scipy.ndimage.measurements.label, or &#8216;fsl&#8217; (using FSL&#8217;s cluster
+commmand).</li>
+<li><strong>min_clust_size</strong> (<em>int</em>) &#8211; Minimum cluster size (i.e. clusters with fewer voxels than this number
+are discarded; also, ROIs containing fewer voxels than this will not
+be listed on the CSV.</li>
+<li><strong>stat_threshold</strong> (<em>int</em><em> or </em><em>float</em>) &#8211; If the stat-file contains uncorrected data, stat_threshold can be used
+to set a lower bound.</li>
+<li><strong>mask_threshold</strong> (<em>bool</em>) &#8211; Threshold for probabilistics masks, such as the Harvard-Oxford masks.
+Default of 25 is chosen as this minimizes overlap between adjacent
+masks while still covering most of the entire brain.</li>
+<li><strong>save_indices</strong> (<em>bool</em>) &#8211; Whether to save the indices (coordinates) of peaks of clusters.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>df</strong> &#8211; Dataframe corresponding to the written csv-file.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Dataframe</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="skbold.postproc.mvp_results.html" class="btn btn-neutral float-right" title="skbold.postproc.mvp_results module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="skbold.postproc.html" class="btn btn-neutral" title="skbold.postproc package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Lukas Snoek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

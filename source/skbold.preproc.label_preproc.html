@@ -1,0 +1,389 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skbold.preproc.label_preproc module &mdash; skbold 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="skbold 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="skbold.preproc package" href="skbold.preproc.html"/>
+        <link rel="next" title="skbold.utils package" href="skbold.utils.html"/>
+        <link rel="prev" title="skbold.preproc package" href="skbold.preproc.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> skbold
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../README_link.html">skbold - utilities and tools for machine learning on BOLD-fMRI data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="skbold.html">skbold package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="skbold.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="skbold.core.html">skbold.core package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.estimators.html">skbold.estimators package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.exp_model.html">skbold.exp_model package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.feature_extraction.html">skbold.feature_extraction package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.feature_selection.html">skbold.feature_selection package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.pipelines.html">skbold.pipelines package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.postproc.html">skbold.postproc package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="skbold.preproc.html">skbold.preproc package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="skbold.preproc.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.utils.html">skbold.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">skbold</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="skbold.html">skbold package</a> &raquo;</li>
+        
+          <li><a href="skbold.preproc.html">skbold.preproc package</a> &raquo;</li>
+        
+      <li>skbold.preproc.label_preproc module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/skbold.preproc.label_preproc.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-skbold.preproc.label_preproc">
+<span id="skbold-preproc-label-preproc-module"></span><h1>skbold.preproc.label_preproc module<a class="headerlink" href="#module-skbold.preproc.label_preproc" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="skbold.preproc.label_preproc.LabelBinarizer">
+<em class="property">class </em><code class="descname">LabelBinarizer</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/preproc/label_preproc.html#LabelBinarizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.preproc.label_preproc.LabelBinarizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<p>Initializes LabelBinarizer object.</p>
+<dl class="method">
+<dt id="skbold.preproc.label_preproc.LabelBinarizer.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/preproc/label_preproc.html#LabelBinarizer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.preproc.label_preproc.LabelBinarizer.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does nothing, but included for scikit-learn pipelines.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.preproc.label_preproc.LabelBinarizer.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/preproc/label_preproc.html#LabelBinarizer.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.preproc.label_preproc.LabelBinarizer.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binarizes y-attribute.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>ndarray</em>) &#8211; Numeric (float) array of shape = [n_samples, n_features]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>X</strong> &#8211; Transformed array of shape = [n_samples, n_features] given the
+indices calculated during fit().</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.preproc.label_preproc.LabelFactorizer">
+<em class="property">class </em><code class="descname">LabelFactorizer</code><span class="sig-paren">(</span><em>grouping</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/preproc/label_preproc.html#LabelFactorizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.preproc.label_preproc.LabelFactorizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<p>Transforms labels according to a given factorial grouping.</p>
+<p>Factorizes/encodes labels based on part of the string label. For example,
+the label-vector [&#8216;A_1&#8217;, &#8216;A_2&#8217;, &#8216;B_1&#8217;, &#8216;B_2&#8217;] can be grouped
+based on letter (A/B) or number (1/2).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>grouping</strong> (<em>List of str</em>) &#8211; List with identifiers for condition names as strings</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><strong>new_labels</strong> (<em>list</em>) &#8211; List with new labels.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skbold.preproc.label_preproc.LabelFactorizer.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>y=None</em>, <em>X=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/preproc/label_preproc.html#LabelFactorizer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.preproc.label_preproc.LabelFactorizer.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does nothing, but included to be used in sklearn&#8217;s Pipeline.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.preproc.label_preproc.LabelFactorizer.get_new_labels">
+<code class="descname">get_new_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/preproc/label_preproc.html#LabelFactorizer.get_new_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.preproc.label_preproc.LabelFactorizer.get_new_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns new labels based on factorization.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.preproc.label_preproc.LabelFactorizer.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>y</em>, <em>X=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/preproc/label_preproc.html#LabelFactorizer.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.preproc.label_preproc.LabelFactorizer.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms label-vector given a grouping.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>y</strong> (<em>List/ndarray of str</em>) &#8211; List of ndarray with strings indicating label-names</li>
+<li><strong>X</strong> (<em>ndarray</em>) &#8211; Numeric (float) array of shape = [n_samples, n_features]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>y_new</strong> (<em>ndarray</em>) &#8211; array with transformed y-labels</li>
+<li><strong>X_new</strong> (<em>ndarray</em>) &#8211; array with transformed data of shape = [n_samples, n_features]
+given new factorial grouping/design.</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.preproc.label_preproc.MajorityUndersampler">
+<em class="property">class </em><code class="descname">MajorityUndersampler</code><span class="sig-paren">(</span><em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/preproc/label_preproc.html#MajorityUndersampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.preproc.label_preproc.MajorityUndersampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<p>Undersamples the majority-class(es) by selecting random samples.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>verbose</strong> (<em>bool</em>) &#8211; Whether to print downsamples number of samples.</td>
+</tr>
+</tbody>
+</table>
+<p>Initializes MajorityUndersampler object.</p>
+<dl class="method">
+<dt id="skbold.preproc.label_preproc.MajorityUndersampler.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/preproc/label_preproc.html#MajorityUndersampler.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.preproc.label_preproc.MajorityUndersampler.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does nothing, but included for scikit-learn pipelines.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.preproc.label_preproc.MajorityUndersampler.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/preproc/label_preproc.html#MajorityUndersampler.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.preproc.label_preproc.MajorityUndersampler.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downsamples majority-class(es).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>ndarray</em>) &#8211; Numeric (float) array of shape = [n_samples, n_features]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>X</strong> &#8211; Transformed array of shape = [n_samples, n_features] given the
+indices calculated during fit().</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="skbold.utils.html" class="btn btn-neutral float-right" title="skbold.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="skbold.preproc.html" class="btn btn-neutral" title="skbold.preproc package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Lukas Snoek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

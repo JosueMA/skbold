@@ -1,0 +1,307 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skbold.feature_selection.filters module &mdash; skbold 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="skbold 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="skbold.feature_selection package" href="skbold.feature_selection.html"/>
+        <link rel="next" title="skbold.feature_selection.selectors module" href="skbold.feature_selection.selectors.html"/>
+        <link rel="prev" title="skbold.feature_selection package" href="skbold.feature_selection.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> skbold
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../README_link.html">skbold - utilities and tools for machine learning on BOLD-fMRI data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="skbold.html">skbold package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="skbold.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="skbold.core.html">skbold.core package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.estimators.html">skbold.estimators package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.exp_model.html">skbold.exp_model package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.feature_extraction.html">skbold.feature_extraction package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="skbold.feature_selection.html">skbold.feature_selection package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="skbold.feature_selection.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.pipelines.html">skbold.pipelines package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.postproc.html">skbold.postproc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.preproc.html">skbold.preproc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.utils.html">skbold.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">skbold</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="skbold.html">skbold package</a> &raquo;</li>
+        
+          <li><a href="skbold.feature_selection.html">skbold.feature_selection package</a> &raquo;</li>
+        
+      <li>skbold.feature_selection.filters module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/skbold.feature_selection.filters.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-skbold.feature_selection.filters">
+<span id="skbold-feature-selection-filters-module"></span><h1>skbold.feature_selection.filters module<a class="headerlink" href="#module-skbold.feature_selection.filters" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="skbold.feature_selection.filters.GenericUnivariateSelect">
+<em class="property">class </em><code class="descname">GenericUnivariateSelect</code><span class="sig-paren">(</span><em>score_func=&lt;function f_classif&gt;</em>, <em>mode='percentile'</em>, <em>param=1e-05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_selection/filters.html#GenericUnivariateSelect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_selection.filters.GenericUnivariateSelect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.feature_selection.univariate_selection._BaseFilter</span></code></p>
+<p>Univariate feature selector with configurable strategy.</p>
+<p>Updated version from scikit-learn: <a class="reference external" href="http://scikit-learn.org/">http://scikit-learn.org/</a><a href="#id1"><span class="problematic" id="id2">`</span></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>score_func</strong> (<em>callable</em>) &#8211; Function taking two arrays X and y, and returning a pair of arrays
+(scores, pvalues). For modes &#8216;percentile&#8217; or &#8216;kbest&#8217; it can return
+a single array scores.</li>
+<li><strong>mode</strong> (<em>{'percentile'</em><em>, </em><em>'k_best'</em><em>, </em><em>'fpr'</em><em>, </em><em>'fdr'</em><em>, </em><em>'fwe'</em><em>, </em><em>'cutoff'}</em>) &#8211; Feature selection mode.</li>
+<li><strong>param</strong> (<em>float</em><em> or </em><em>int depending on the feature selection mode</em>) &#8211; Parameter of the corresponding mode.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>scores</strong> (<em>array-like</em><em>, </em><em>shape=</em><em>(</em><em>n_features</em><em>,</em><em></em><em>)</em><em></em>) &#8211; Scores of features.</li>
+<li><strong>pvalues</strong> (<em>array-like</em><em>, </em><em>shape=</em><em>(</em><em>n_features</em><em>,</em><em></em><em>)</em><em></em>) &#8211; p-values of feature scores, None if <cite>score_func</cite> returned scores only.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.feature_selection.filters.SelectAboveCutoff">
+<em class="property">class </em><code class="descname">SelectAboveCutoff</code><span class="sig-paren">(</span><em>cutoff</em>, <em>score_func=&lt;function f_classif&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_selection/filters.html#SelectAboveCutoff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_selection.filters.SelectAboveCutoff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.feature_selection.univariate_selection._BaseFilter</span></code></p>
+<p>Filter: Select features with a score above some cutoff.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>cutoff</strong> (<em>int/float</em>) &#8211; Cutoff for feature-scores to be selected.</li>
+<li><strong>score_func</strong> (<em>callable</em>) &#8211; Function that takes a 2D array X (samples x features) and returns a
+score reflecting a univariate difference (higher is better).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="skbold.feature_selection.selectors.html" class="btn btn-neutral float-right" title="skbold.feature_selection.selectors module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="skbold.feature_selection.html" class="btn btn-neutral" title="skbold.feature_selection package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Lukas Snoek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

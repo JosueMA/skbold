@@ -1,0 +1,811 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skbold.core package &mdash; skbold 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="skbold 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="skbold package" href="skbold.html"/>
+        <link rel="next" title="skbold.core.convert_to_epi module" href="skbold.core.convert_to_epi.html"/>
+        <link rel="prev" title="skbold package" href="skbold.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> skbold
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../README_link.html">skbold - utilities and tools for machine learning on BOLD-fMRI data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="skbold.html">skbold package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="skbold.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">skbold.core package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.estimators.html">skbold.estimators package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.exp_model.html">skbold.exp_model package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.feature_extraction.html">skbold.feature_extraction package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.feature_selection.html">skbold.feature_selection package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.pipelines.html">skbold.pipelines package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.postproc.html">skbold.postproc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.preproc.html">skbold.preproc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.utils.html">skbold.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">skbold</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="skbold.html">skbold package</a> &raquo;</li>
+        
+      <li>skbold.core package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/skbold.core.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-skbold.core">
+<span id="skbold-core-package"></span><h1>skbold.core package<a class="headerlink" href="#module-skbold.core" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal"><span class="pre">core</span></code> subpackage contains skbold&#8217;s most important data-structure: the
+<code class="docutils literal"><span class="pre">Mvp</span></code>. This class forms the basis of the &#8216;multivoxel-patterns&#8217; (i.e. mvp)
+that are used throughout the package. Subclasses of Mvp (<code class="docutils literal"><span class="pre">MvpWithin</span></code> and
+<code class="docutils literal"><span class="pre">MvpBetween</span></code>) are also defined in this core module.</p>
+<p>The <code class="docutils literal"><span class="pre">MvpWithin</span></code> object is meant as a data-structure that contains a set of
+multivoxel fMRI patterns of <em>single trials, for a single subject</em>, hence
+the &#8216;within&#8217; part (i.e. within-subjects). Currently, it has a single
+public method, <code class="docutils literal"><span class="pre">create()</span></code>, loading a set of contrasts from a FSL-firstlevel
+directory (i.e. a .feat-directory). Thus, importantly, it assumes that the
+single-trial patterns are already modelled, on a single-trial basis, using
+some kind of GLM. These trialwise patterns are then horizontally stacked
+to create a 2D samples by features matrix, which is set to the <code class="docutils literal"><span class="pre">X</span></code> attribute
+of MvpWithin.</p>
+<p>The <code class="docutils literal"><span class="pre">MvpBetween</span></code> object is meant as a data-structure that contains a set of
+multivoxel fMRI patterns of <em>single conditions, for a set of subjects</em>. It is,
+so to say, a &#8216;between-subjects&#8217; multivoxel pattern, in which subjects are
+&#8216;samples&#8217;. In contrast to MvpWithin, contrasts that will be loaded are less
+restricted in terms of their format; the only requisite is that they are
+nifti files. Notably, the MvpBetween format allows to vertically stack
+different kind of &#8216;feature-sets&#8217; in a single MvpBetween object. For example,
+it is possible to, for a given set of subjects, stack a functional contrast
+(e.g. a high-load minus low-load functional contrast) with another functional
+contrast (e.g. a conflict minus no-conflict functional contrast) in order to
+use features from both sets to predict a certain psychometric or behavioral
+variable of the corresponding subjects (such as, e.g., intelligence).
+Also, the MvpBetween format allows to load (and stack!) VBM, TBSS,
+resting-state (to extract connectivity measures), and dual-regression data.
+More information can be found below in the API. A use case can be found on
+the main page of <a class="reference external" href="http://skbold.readthedocs.io">ReadTheDocs</a>.</p>
+<p>Also, functional-to-standard (i.e. <code class="docutils literal"><span class="pre">convert2mni</span></code>) and standard-to-functional
+(i.e. <code class="docutils literal"><span class="pre">convert2epi</span></code>) warp-functions for niftis are defined here, because
+they have caused circular import errors in the past.</p>
+<dl class="class">
+<dt id="skbold.core.Mvp">
+<em class="property">class </em><code class="descname">Mvp</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em>, <em>mask=None</em>, <em>mask_thres=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp.html#Mvp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.Mvp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Mvp (multiVoxel Pattern) class.
+Creates an object, specialized for storing fMRI data that will be analyzed
+using machine learning or RSA-like analyses, that stores both the data
+(X: an array of samples by features, y: numeric labels corresponding to
+X&#8217;s classes/conditions) and the corresponding meta-data (e.g. nifti header,
+mask info, etc.).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>ndarray</em>) &#8211; A 2D numpy-array with rows indicating samples and
+columns indicating features.</li>
+<li><strong>y</strong> (<em>list</em><em> or </em><em>ndarray</em>) &#8211; Array/list with labels/targets corresponding to samples in X.</li>
+<li><strong>mask</strong> (<em>str</em>) &#8211; Absolute path to nifti-file that will mask (index) the patterns.</li>
+<li><strong>mask_thres</strong> (<em>int</em><em> or </em><em>float</em>) &#8211; Minimum value for mask (in cases of probabilistic masks).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mask_shape</strong> (<em>tuple</em>) &#8211; Shape of mask that patterns will be indexed with.</li>
+<li><strong>nifti_header</strong> (<em>Nifti1Header object</em>) &#8211; Nifti-header from corresponding mask.</li>
+<li><strong>affine</strong> (<em>ndarray</em>) &#8211; Affine corresponding to nifti-mask.</li>
+<li><strong>voxel_idx</strong> (<em>ndarray</em>) &#8211; Array with integer-indices indicating which voxels are used in the
+patterns relative to whole-brain space. In other words, it allows to
+map back the patterns to a whole-brain orientation.</li>
+<li><strong>X</strong> (<em>ndarray</em>) &#8211; The actual patterns (2D: samples X features)</li>
+<li><strong>y</strong> (<em>list</em><em> or </em><em>ndarray</em>) &#8211; Array/list with labels/targets corresponding to samples in X.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This class is mainly meant to serve as a parent-class for <code class="docutils literal"><span class="pre">MvpWithin</span></code>
+and <code class="docutils literal"><span class="pre">MvpBetween</span></code>, but it can alternatively be used as an object to store
+a &#8216;custom&#8217; multivariate-pattern set with meta-data.</p>
+<dl class="method">
+<dt id="skbold.core.Mvp.update_mask">
+<code class="descname">update_mask</code><span class="sig-paren">(</span><em>mask</em>, <em>threshold=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp.html#Mvp.update_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.Mvp.update_mask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="skbold.core.Mvp.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>path=None</em>, <em>name='mvp'</em>, <em>backend='joblib'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp.html#Mvp.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.Mvp.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the Mvp-object to disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<em>str</em>) &#8211; Absolute path where the file will be written to.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; Name of to-be-written file.</li>
+<li><strong>backend</strong> (<em>str</em>) &#8211; Which format will be used to save the files. Default is &#8216;joblib&#8217;,
+which conveniently saves the Mvp-object as one file. Alternatively,
+and if the Mvp-object is too large to be save with joblib, a
+data-header format will be used, in which the data (<code class="docutils literal"><span class="pre">X</span></code>) will be
+saved using Numpy and the meta-data (everythin except <code class="docutils literal"><span class="pre">X</span></code>) will
+be saved using joblib.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="skbold.core.convert2epi">
+<code class="descname">convert2epi</code><span class="sig-paren">(</span><em>file2transform</em>, <em>reg_dir</em>, <em>out_dir=None</em>, <em>interpolation='trilinear'</em>, <em>suffix='epi'</em>, <em>overwrite=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/convert_to_epi.html#convert2epi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.convert2epi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a nifti from mni152 (2mm) to EPI (native) format.
+Assuming that reg_dir is a directory with transformation-files (warps)
+including standard2example_func warps, this function uses nipype&#8217;s
+fsl interface to flirt a nifti to EPI format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file2transform</strong> (<em>str</em><em> or </em><em>list</em>) &#8211; Absolute path(s) to nifti file(s) that needs to be transformed</li>
+<li><strong>reg_dir</strong> (<em>str</em>) &#8211; Absolute path to registration directory with warps</li>
+<li><strong>out_dir</strong> (<em>str</em>) &#8211; Absolute path to desired out directory. Default is same directory as
+the to-be transformed file.</li>
+<li><strong>interpolation</strong> (<em>str</em>) &#8211; Interpolation used by flirt. Default is &#8216;trilinear&#8217;.</li>
+<li><strong>suffix</strong> (<em>str</em>) &#8211; What to suffix the transformed file with (default : &#8216;epi&#8217;)</li>
+<li><strong>overwrite</strong> (<em>bool</em>) &#8211; Whether to overwrite existing transformed files</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out_all</strong> &#8211; Absolute path(s) to newly transformed file(s).</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="skbold.core.convert2mni">
+<code class="descname">convert2mni</code><span class="sig-paren">(</span><em>file2transform</em>, <em>reg_dir</em>, <em>out_dir=None</em>, <em>interpolation='trilinear'</em>, <em>suffix=None</em>, <em>overwrite=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/convert_to_mni.html#convert2mni"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.convert2mni" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a nifti to mni152 (2mm) format.
+Assuming that reg_dir is a directory with transformation-files (warps)
+including example_func2standard warps, this function uses nipype&#8217;s
+fsl interface to flirt a nifti to mni format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file2transform</strong> (<em>str</em><em> or </em><em>list</em>) &#8211; Absolute path to nifti file(s) that needs to be transformed</li>
+<li><strong>reg_dir</strong> (<em>str</em>) &#8211; Absolute path to registration directory with warps</li>
+<li><strong>out_dir</strong> (<em>str</em>) &#8211; Absolute path to desired out directory. Default is same directory as
+the to-be transformed file.</li>
+<li><strong>interpolation</strong> (<em>str</em>) &#8211; Interpolation used by flirt. Default is &#8216;trilinear&#8217;.</li>
+<li><strong>suffix</strong> (<em>str</em>) &#8211; What to append to name when converted (default : basename
+file2transform).</li>
+<li><strong>overwrite</strong> (<em>bool</em>) &#8211; Whether to overwrite already existing transformed file(s)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out_all</strong> &#8211; Absolute path(s) to newly transformed file(s).</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.core.MvpBetween">
+<em class="property">class </em><code class="descname">MvpBetween</code><span class="sig-paren">(</span><em>source</em>, <em>subject_idf='sub0???'</em>, <em>remove_zeros=True</em>, <em>X=None</em>, <em>y=None</em>, <em>mask=None</em>, <em>mask_thres=0</em>, <em>subject_list=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp_between.html#MvpBetween"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.MvpBetween" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="skbold.core.mvp.html#skbold.core.mvp.Mvp" title="skbold.core.mvp.Mvp"><code class="xref py py-class docutils literal"><span class="pre">skbold.core.mvp.Mvp</span></code></a></p>
+<p>Extracts and stores multivoxel pattern information across subjects.
+The MvpBetween class allows for the extraction and storage of multivoxel
+(MRI) pattern information across subjects. The MvpBetween class can handle
+various types of information, including functional contrasts, 3D
+(subject-specific) and 4D (subjects stacked) VBM and TBSS data,
+dual-regression data, and functional-connectivity data from resting-state
+scans (experimental).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>source</strong> (<em>dict</em>) &#8211; <p>Dictionary with types of data as keys and data-specific dictionaries
+as values. Keys can be &#8216;Contrast_*&#8217; (indicating a 3D functional
+contrast), &#8216;4D_anat&#8217; (for 4D anatomical - VBM/TBSS - files), &#8216;VBM&#8217;,
+&#8216;TBSS&#8217;, and &#8216;dual_reg&#8217; (a subject-spedific 4D file with components as
+fourth dimension).</p>
+<p>The dictionary passed as values must include, for each
+data-type, a path with wildcards to the corresponding
+(subject-specific) data-file. Other, optional, key-value pairs per
+data-type can be assigned, including &#8216;mask&#8217;: &#8216;path&#8217;, to use
+data-type-specific masks.</p>
+<p>An example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path_emo</span> <span class="o">=</span> <span class="s1">&#39;~/data/sub0*/*.feat/stats/tstat1.nii.gz&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;Contrast_emo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="n">path_emo</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vbm_mask</span> <span class="o">=</span> <span class="s1">&#39;~/vbm_mask.nii.gz&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path_vbm</span> <span class="o">=</span> <span class="s1">&#39;~/data/sub0*/*vbm.nii.gz&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;VBM&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="n">path_vbm</span><span class="p">,</span> <span class="s1">&#39;mask&#39;</span><span class="p">:</span> <span class="n">vbm_mask</span><span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><strong>subject_idf</strong> (<em>str</em>) &#8211; Subject-identifier. This identifier is used to extract subject-names
+from the globbed directories in the &#8216;path&#8217; keys in source, so that
+it is known which pattern belongs to which subject. This way,
+MvpBetween can check which subjects contain complete data!</li>
+<li><strong>X</strong> (<em>ndarray</em>) &#8211; Not necessary to pass MvpWithin, but needs to be defined as it is
+needed in the super-constructor.</li>
+<li><strong>y</strong> (<em>ndarray</em><em> or </em><em>list</em>) &#8211; Labels or targets corresponding to the samples in <code class="docutils literal"><span class="pre">X</span></code>.</li>
+<li><strong>mask</strong> (<em>str</em>) &#8211; Absolute path to nifti-file that will be used as a common mask.
+Note: this will only be applied if its shape corresponds to the
+to-be-indexed data. Otherwise, no mask is applied. Also, this mask
+is &#8216;overridden&#8217; if source[data_type] contains a &#8216;mask&#8217; key, which
+implies that this particular data-type has a custom mask.</li>
+<li><strong>mask_threshold</strong> (<em>int</em><em> or </em><em>float</em>) &#8211; Minimum value to binarize the mask when it&#8217;s probabilistic.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mask_shape</strong> (<em>tuple</em>) &#8211; Shape of mask that patterns will be indexed with.</li>
+<li><strong>nifti_header</strong> (<em>list of Nifti1Header objects</em>) &#8211; Nifti-headers from original data-types.</li>
+<li><strong>affine</strong> (<em>list of ndarray</em>) &#8211; Affines corresponding to nifti-masks of each data-type.</li>
+<li><strong>X</strong> (<em>ndarray</em>) &#8211; The actual patterns (2D: samples X features)</li>
+<li><strong>y</strong> (<em>list</em><em> or </em><em>ndarray</em>) &#8211; Array/list with labels/targets corresponding to samples in X.</li>
+<li><strong>common_subjects</strong> (<em>list</em>) &#8211; List of subject-names that have complete data specified in source.</li>
+<li><strong>featureset_id</strong> (<em>ndarray</em>) &#8211; Array with integers of size X.shape[1] (i.e. the amount of features in
+X). Each unique integer, starting at 0, refers to a different
+feature-set.</li>
+<li><strong>voxel_idx</strong> (<em>ndarray</em>) &#8211; <p>Array with integers of size X.shape[1]. Per feature-set, these voxel-
+indices allow the features to be mapped back to whole-brain space.
+For example, to map back the features in X from feature set 1 to MNI152
+(2mm) space, do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mni_vol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">91</span><span class="p">,</span> <span class="mi">109</span><span class="p">,</span> <span class="mi">91</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tmp_idx</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">featureset_id</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mni_vol</span><span class="p">[</span><span class="n">mvp</span><span class="o">.</span><span class="n">featureset_id</span><span class="p">[</span><span class="n">tmp_idx</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mvp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmp_idx</span><span class="p">]</span>
+</pre></div>
+</div>
+</li>
+<li><strong>data_shape</strong> (<em>list of tuples</em>) &#8211; Original (whole-brain) shape of the loaded data, per data-type.</li>
+<li><strong>data_name</strong> (<em>list of str</em>) &#8211; List of names of data-types.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skbold.core.MvpBetween.add_y">
+<code class="descname">add_y</code><span class="sig-paren">(</span><em>file_path</em>, <em>col_name</em>, <em>sep='\t'</em>, <em>index_col=0</em>, <em>normalize=False</em>, <em>remove=None</em>, <em>ensure_balanced=False</em>, <em>nan_strategy='remove'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp_between.html#MvpBetween.add_y"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.MvpBetween.add_y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets <code class="docutils literal"><span class="pre">y</span></code> attribute to an outcome-variable (target).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file_path</strong> (<em>str</em>) &#8211; Absolute path to spreadsheet-like file including the outcome var.</li>
+<li><strong>col_name</strong> (<em>str</em>) &#8211; Column name in spreadsheet containing the outcome variable</li>
+<li><strong>sep</strong> (<em>str</em>) &#8211; Separator to parse the spreadsheet-like file.</li>
+<li><strong>index_col</strong> (<em>int</em>) &#8211; Which column to use as index (should correspond to subject-name).</li>
+<li><strong>normalize</strong> (<em>bool</em>) &#8211; Whether to normalize (0 mean, unit std) the outcome variable.</li>
+<li><strong>remove</strong> (<em>int</em><em> or </em><em>float</em><em> or </em><em>str</em>) &#8211; Removes instances in which y == remove from MvpBetween object.</li>
+<li><strong>ensure_balanced</strong> (<em>bool</em>) &#8211; Whether to ensure balanced classes (if True, done by undersampling
+the majority class).</li>
+<li><strong>nan_strategy</strong> (<em>str</em>) &#8211; Strategy on how to deal with NaNs. Default: &#8216;remove&#8217;. Also, a
+specific string, int, or float can be specified when you want to
+impute a specific value. Other options,
+see: sklearn.preprocessing.Imputer.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.core.MvpBetween.apply_binarization_params">
+<code class="descname">apply_binarization_params</code><span class="sig-paren">(</span><em>param_file</em>, <em>ensure_balanced=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp_between.html#MvpBetween.apply_binarization_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.MvpBetween.apply_binarization_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies binarization-parameters to y.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.core.MvpBetween.binarize_y">
+<code class="descname">binarize_y</code><span class="sig-paren">(</span><em>params</em>, <em>save_path=None</em>, <em>ensure_balanced=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp_between.html#MvpBetween.binarize_y"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.MvpBetween.binarize_y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binarizes mvp&#8217;s y-attribute using a specified method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>params</strong> (<em>dict</em>) &#8211; <p>The outcome variable (y) will be binarized along the
+key-value pairs in the params-argument. Options:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;percentile&#39;</span><span class="p">,</span> <span class="s1">&#39;high&#39;</span><span class="p">:</span> <span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;low&#39;</span><span class="p">:</span> <span class="mi">25</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;zscore&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;cutoff&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;median&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><strong>save_path</strong> (<em>str</em>) &#8211; If not None (default), this should be an absolute path referring
+to where the binarization-params should be saved.</li>
+<li><strong>ensure_balanced</strong> (<em>bool</em>) &#8211; Whether to ensure balanced classes (if True, done by undersampling
+the majority class).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.core.MvpBetween.calculate_confound_weighting">
+<code class="descname">calculate_confound_weighting</code><span class="sig-paren">(</span><em>file_path</em>, <em>col_name</em>, <em>sep='\t'</em>, <em>index_col=0</em>, <em>estimator=None</em>, <em>nan_strategy='depends'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp_between.html#MvpBetween.calculate_confound_weighting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.MvpBetween.calculate_confound_weighting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates inverse probability weighting for confounds.</p>
+<p>Note: should be moved to mvp-core</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_path</strong> (<em>str</em>) &#8211; Absolute path to spreadsheet-like file including the confounding
+variable.</li>
+<li><strong>col_name</strong> (<em>str</em><em> or </em><em>List</em><em>[</em><em>str</em><em>]</em><em></em>) &#8211; Column name in spreadsheet containing the confouding variable</li>
+<li><strong>sep</strong> (<em>str</em>) &#8211; Separator to parse the spreadsheet-like file.</li>
+<li><strong>index_col</strong> (<em>int</em>) &#8211; Which column to use as index (should correspond to subject-name).</li>
+<li><strong>estimator</strong> (<em>scikit-learn estimator</em>) &#8211; Estimator used to calculate p(y=1 | confound-array)</li>
+<li><strong>nan_strategy</strong> (<em>str</em>) &#8211; How to impute NaNs.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ipw</strong> &#8211; Array with inverse probability weights for the samples, based on
+the confounds indicated by col_name.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<p>Linn, K.A., Gaonkar, B., Doshi, J., Davatzikos, C., &amp; Shinohara, R.
+(2016). Addressing confounding in predictive models with an application
+to neuroimaging. Int. J. Biostat., 12(1): 31-44.</p>
+<p>Code adapted from <a class="reference external" href="https://github.com/kalinn/IPW-SVM">https://github.com/kalinn/IPW-SVM</a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.core.MvpBetween.create">
+<code class="descname">create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp_between.html#MvpBetween.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.MvpBetween.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts and stores data as specified in source.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If data-type is not one of [&#8216;VBM&#8217;, &#8216;TBSS&#8217;, &#8216;4D_anat*&#8217;, &#8216;dual_reg&#8217;,
+&#8216;Contrast*&#8217;]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.core.MvpBetween.regress_out_confounds">
+<code class="descname">regress_out_confounds</code><span class="sig-paren">(</span><em>file_path</em>, <em>col_name</em>, <em>backend='numpy'</em>, <em>sep='\t'</em>, <em>index_col=0</em>, <em>nan_strategy='depends'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp_between.html#MvpBetween.regress_out_confounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.MvpBetween.regress_out_confounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Regresses out a confounding variable from X.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file_path</strong> (<em>str</em>) &#8211; Absolute path to spreadsheet-like file including the confounding
+variable.</li>
+<li><strong>col_name</strong> (<em>str</em><em> or </em><em>List</em><em>[</em><em>str</em><em>]</em><em></em>) &#8211; Column name in spreadsheet containing the confouding variable</li>
+<li><strong>backend</strong> (<em>str</em>) &#8211; Which algorithm to use to regress out the confound. The option
+&#8216;numpy&#8217; uses np.linalg.lstsq() and &#8216;sklearn&#8217; uses the
+LinearRegression estimator.</li>
+<li><strong>sep</strong> (<em>str</em>) &#8211; Separator to parse the spreadsheet-like file.</li>
+<li><strong>index_col</strong> (<em>int</em>) &#8211; Which column to use as index (should correspond to subject-name).</li>
+<li><strong>nan_strategy</strong> (<em>str</em>) &#8211; How to impute NaNs.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.core.MvpBetween.run_searchlight">
+<code class="descname">run_searchlight</code><span class="sig-paren">(</span><em>out_dir</em>, <em>name='sl_results'</em>, <em>n_folds=10</em>, <em>radius=5</em>, <em>mask=None</em>, <em>estimator=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp_between.html#MvpBetween.run_searchlight"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.MvpBetween.run_searchlight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a searchlight on the mvp object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>out_dir</strong> (<em>str</em>) &#8211; Path to which to save the searchlight results</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; Name for the searchlight-results-file (nifti)</li>
+<li><strong>n_folds</strong> (<em>int</em>) &#8211; The amount of folds in sklearn&#8217;s StratifiedKFold.</li>
+<li><strong>radius</strong> (<em>int/list</em>) &#8211; Radius for the searchlight. If list, it iterates over radii.</li>
+<li><strong>mask</strong> (<em>str</em>) &#8211; Path to mask to apply to mvp. If nothing is listed, it will use
+the masks applied when the mvp was created.</li>
+<li><strong>estimator</strong> (<em>sklearn estimator</em><em> or </em><em>pipeline</em>) &#8211; Estimator to use in the classification process.</li>
+<li><strong>**kwargs</strong> (<em>misc</em>) &#8211; Other arguments for initializing nilearn&#8217;s searchlight object (see
+nilearn.github.io/decoding/searchlight.html).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.core.MvpBetween.split">
+<code class="descname">split</code><span class="sig-paren">(</span><em>file_path</em>, <em>col_name</em>, <em>target</em>, <em>sep='\t'</em>, <em>index_col=0</em>, <em>nan_strategy='train'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp_between.html#MvpBetween.split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.MvpBetween.split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits an MvpBetween object based on some external index.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file_path</strong> (<em>str</em>) &#8211; Absolute path to spreadsheet-like file including the outcome var.</li>
+<li><strong>col_name</strong> (<em>str</em>) &#8211; Column name in spreadsheet containing the outcome variable</li>
+<li><strong>target</strong> (<em>str</em><em> or </em><em>int</em><em> or </em><em>float</em>) &#8211; Target to which the data in col_name needs to be compared to, in
+order to create an index.</li>
+<li><strong>sep</strong> (<em>str</em>) &#8211; Separator to parse the spreadsheet-like file.</li>
+<li><strong>index_col</strong> (<em>int</em>) &#8211; Which column to use as index (should correspond to subject-name).</li>
+<li><strong>nan_strategy</strong> (<em>str</em>) &#8211; Which value to impute if the labeling is absent. Default: &#8216;train&#8217;.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.core.MvpBetween.update_sample">
+<code class="descname">update_sample</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp_between.html#MvpBetween.update_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.MvpBetween.update_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the data matrix and associated attributes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.core.MvpBetween.write_4D">
+<code class="descname">write_4D</code><span class="sig-paren">(</span><em>path=None</em>, <em>return_nimg=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp_between.html#MvpBetween.write_4D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.MvpBetween.write_4D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a 4D nifti (subs = 4th dimension) of X.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<em>str</em>) &#8211; Absolute path to save nifti to.</li>
+<li><strong>return_nimg</strong> (<em>bool</em>) &#8211; Whether to actually return the Nifti1-image object.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.core.MvpWithin">
+<em class="property">class </em><code class="descname">MvpWithin</code><span class="sig-paren">(</span><em>source</em>, <em>read_labels=True</em>, <em>remove_contrast=[]</em>, <em>invert_selection=None</em>, <em>ref_space='epi'</em>, <em>beta2tstat=True</em>, <em>remove_zeros=True</em>, <em>X=None</em>, <em>y=None</em>, <em>mask=None</em>, <em>mask_threshold=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp_within.html#MvpWithin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.MvpWithin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="skbold.core.mvp.html#skbold.core.mvp.Mvp" title="skbold.core.mvp.Mvp"><code class="xref py py-class docutils literal"><span class="pre">skbold.core.mvp.Mvp</span></code></a></p>
+<p>Extracts and stores subject-specific single-trial multivoxel-patterns
+The MvpWithin class allows for the extraction of subject-specific
+single-trial, multivoxel fMRI patterns from a FSL feat-directory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>source</strong> (<em>str</em>) &#8211; An absolute path to a subject-specific first-level FEAT directory.</li>
+<li><strong>read_labels</strong> (<em>bool</em>) &#8211; Whether to read the labels/targets (i.e. <code class="docutils literal"><span class="pre">y</span></code>) from the contrast
+names defined in the design.con file.</li>
+<li><strong>remove_contrast</strong> (<em>list</em>) &#8211; Given that all contrasts (COPEs) are loaded from the FEAT-directory,
+this argument can be used to remove irrelevant contrasts (e.g.
+contrasts of nuisance predictors). Entries in remove_contrast do
+not have to literal; they may be a substring of the full name of the
+contrast.</li>
+<li><strong>invert_selection</strong> (<em>bool</em>) &#8211; Sometimes, instead of loading in all contrasts and excluding some,
+you might want to load only a single or a couple contrasts, and
+exclude all other. By setting invert_selection to True, it treats
+the remove_contrast variable as a list of contrasts to include.</li>
+<li><strong>ref_space</strong> (<em>str</em>) &#8211; Indicates in which &#8216;space&#8217; the patterns will be stored. The default
+is &#8216;epi&#8217;, indicating that the patterns will be loaded and stored
+in subject-specific (native) functional space. The other option is
+&#8216;mni&#8217;, which indicates that MvpWithin will first transform contrasts
+to MNI152 (2mm) space before it loads them. This option assumes
+that a &#8216;reg&#8217; directory is present in the .feat-directory, including
+warp-files from functional to mni space
+(i.e. example_func2standara.nii.gz).</li>
+<li><strong>beta2tstat</strong> (<em>bool</em>) &#8211; Whether to convert beta-values from COPEs to t-statistics by
+dividing them by the square-root of the res4d.</li>
+<li><strong>remove_zeros</strong> (<em>bool</em>) &#8211; Whether to remove features (i.e. voxels) which are 0 across all
+trials (due to, e.g., being located outside the brain).</li>
+<li><strong>X</strong> (<em>ndarray</em>) &#8211; Not necessary to pass MvpWithin, but needs to be defined as it is
+needed in the super-constructor.</li>
+<li><strong>y</strong> (<em>ndarray</em><em> or </em><em>list</em>) &#8211; Labels or targets corresponding to the samples in <code class="docutils literal"><span class="pre">X</span></code>. This can
+be used when read_labels is set to False.</li>
+<li><strong>mask</strong> (<em>str</em>) &#8211; Absolute path to nifti-file that will be used as mask.</li>
+<li><strong>mask_threshold</strong> (<em>int</em><em> or </em><em>float</em>) &#8211; Minimum value to binarize the mask when it&#8217;s probabilistic.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mask_shape</strong> (<em>tuple</em>) &#8211; Shape of mask that patterns will be indexed with.</li>
+<li><strong>nifti_header</strong> (<em>Nifti1Header object</em>) &#8211; Nifti-header from corresponding mask.</li>
+<li><strong>affine</strong> (<em>ndarray</em>) &#8211; Affine corresponding to nifti-mask.</li>
+<li><strong>voxel_idx</strong> (<em>ndarray</em>) &#8211; Array with integer-indices indicating which voxels are used in the
+patterns relative to whole-brain space. In other words, it allows to
+map back the patterns to a whole-brain orientation.</li>
+<li><strong>X</strong> (<em>ndarray</em>) &#8211; The actual patterns (2D: samples X features)</li>
+<li><strong>y</strong> (<em>list</em><em> or </em><em>ndarray</em>) &#8211; Array/list with labels/targets corresponding to samples in X.</li>
+<li><strong>contrast_labels</strong> (<em>list</em>) &#8211; List of names corresponding to the y-values.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skbold.core.MvpWithin.create">
+<code class="descname">create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp_within.html#MvpWithin.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.MvpWithin.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts (meta-)data from FEAT-directory given appropriate settings
+during initialization.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the &#8216;source&#8217;-directory doesn&#8217;t exist.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the number of loaded contrasts does not equal the number of
+extracted labels.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="skbold.core.convert_to_epi.html">skbold.core.convert_to_epi module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="skbold.core.convert_to_mni.html">skbold.core.convert_to_mni module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="skbold.core.mvp.html">skbold.core.mvp module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="skbold.core.mvp_between.html">skbold.core.mvp_between module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="skbold.core.mvp_within.html">skbold.core.mvp_within module</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="skbold.core.convert_to_epi.html" class="btn btn-neutral float-right" title="skbold.core.convert_to_epi module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="skbold.html" class="btn btn-neutral" title="skbold package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Lukas Snoek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

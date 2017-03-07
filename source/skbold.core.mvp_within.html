@@ -1,0 +1,340 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skbold.core.mvp_within module &mdash; skbold 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="skbold 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="skbold.core package" href="skbold.core.html"/>
+        <link rel="next" title="skbold.estimators package" href="skbold.estimators.html"/>
+        <link rel="prev" title="skbold.core.mvp_between module" href="skbold.core.mvp_between.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> skbold
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../README_link.html">skbold - utilities and tools for machine learning on BOLD-fMRI data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="skbold.html">skbold package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="skbold.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="skbold.core.html">skbold.core package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="skbold.core.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.estimators.html">skbold.estimators package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.exp_model.html">skbold.exp_model package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.feature_extraction.html">skbold.feature_extraction package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.feature_selection.html">skbold.feature_selection package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.pipelines.html">skbold.pipelines package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.postproc.html">skbold.postproc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.preproc.html">skbold.preproc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.utils.html">skbold.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">skbold</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="skbold.html">skbold package</a> &raquo;</li>
+        
+          <li><a href="skbold.core.html">skbold.core package</a> &raquo;</li>
+        
+      <li>skbold.core.mvp_within module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/skbold.core.mvp_within.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-skbold.core.mvp_within">
+<span id="skbold-core-mvp-within-module"></span><h1>skbold.core.mvp_within module<a class="headerlink" href="#module-skbold.core.mvp_within" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="skbold.core.mvp_within.MvpWithin">
+<em class="property">class </em><code class="descname">MvpWithin</code><span class="sig-paren">(</span><em>source</em>, <em>read_labels=True</em>, <em>remove_contrast=[]</em>, <em>invert_selection=None</em>, <em>ref_space='epi'</em>, <em>beta2tstat=True</em>, <em>remove_zeros=True</em>, <em>X=None</em>, <em>y=None</em>, <em>mask=None</em>, <em>mask_threshold=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp_within.html#MvpWithin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.mvp_within.MvpWithin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="skbold.core.mvp.html#skbold.core.mvp.Mvp" title="skbold.core.mvp.Mvp"><code class="xref py py-class docutils literal"><span class="pre">skbold.core.mvp.Mvp</span></code></a></p>
+<p>Extracts and stores subject-specific single-trial multivoxel-patterns
+The MvpWithin class allows for the extraction of subject-specific
+single-trial, multivoxel fMRI patterns from a FSL feat-directory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>source</strong> (<em>str</em>) &#8211; An absolute path to a subject-specific first-level FEAT directory.</li>
+<li><strong>read_labels</strong> (<em>bool</em>) &#8211; Whether to read the labels/targets (i.e. <code class="docutils literal"><span class="pre">y</span></code>) from the contrast
+names defined in the design.con file.</li>
+<li><strong>remove_contrast</strong> (<em>list</em>) &#8211; Given that all contrasts (COPEs) are loaded from the FEAT-directory,
+this argument can be used to remove irrelevant contrasts (e.g.
+contrasts of nuisance predictors). Entries in remove_contrast do
+not have to literal; they may be a substring of the full name of the
+contrast.</li>
+<li><strong>invert_selection</strong> (<em>bool</em>) &#8211; Sometimes, instead of loading in all contrasts and excluding some,
+you might want to load only a single or a couple contrasts, and
+exclude all other. By setting invert_selection to True, it treats
+the remove_contrast variable as a list of contrasts to include.</li>
+<li><strong>ref_space</strong> (<em>str</em>) &#8211; Indicates in which &#8216;space&#8217; the patterns will be stored. The default
+is &#8216;epi&#8217;, indicating that the patterns will be loaded and stored
+in subject-specific (native) functional space. The other option is
+&#8216;mni&#8217;, which indicates that MvpWithin will first transform contrasts
+to MNI152 (2mm) space before it loads them. This option assumes
+that a &#8216;reg&#8217; directory is present in the .feat-directory, including
+warp-files from functional to mni space
+(i.e. example_func2standara.nii.gz).</li>
+<li><strong>beta2tstat</strong> (<em>bool</em>) &#8211; Whether to convert beta-values from COPEs to t-statistics by
+dividing them by the square-root of the res4d.</li>
+<li><strong>remove_zeros</strong> (<em>bool</em>) &#8211; Whether to remove features (i.e. voxels) which are 0 across all
+trials (due to, e.g., being located outside the brain).</li>
+<li><strong>X</strong> (<em>ndarray</em>) &#8211; Not necessary to pass MvpWithin, but needs to be defined as it is
+needed in the super-constructor.</li>
+<li><strong>y</strong> (<em>ndarray</em><em> or </em><em>list</em>) &#8211; Labels or targets corresponding to the samples in <code class="docutils literal"><span class="pre">X</span></code>. This can
+be used when read_labels is set to False.</li>
+<li><strong>mask</strong> (<em>str</em>) &#8211; Absolute path to nifti-file that will be used as mask.</li>
+<li><strong>mask_threshold</strong> (<em>int</em><em> or </em><em>float</em>) &#8211; Minimum value to binarize the mask when it&#8217;s probabilistic.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mask_shape</strong> (<em>tuple</em>) &#8211; Shape of mask that patterns will be indexed with.</li>
+<li><strong>nifti_header</strong> (<em>Nifti1Header object</em>) &#8211; Nifti-header from corresponding mask.</li>
+<li><strong>affine</strong> (<em>ndarray</em>) &#8211; Affine corresponding to nifti-mask.</li>
+<li><strong>voxel_idx</strong> (<em>ndarray</em>) &#8211; Array with integer-indices indicating which voxels are used in the
+patterns relative to whole-brain space. In other words, it allows to
+map back the patterns to a whole-brain orientation.</li>
+<li><strong>X</strong> (<em>ndarray</em>) &#8211; The actual patterns (2D: samples X features)</li>
+<li><strong>y</strong> (<em>list</em><em> or </em><em>ndarray</em>) &#8211; Array/list with labels/targets corresponding to samples in X.</li>
+<li><strong>contrast_labels</strong> (<em>list</em>) &#8211; List of names corresponding to the y-values.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skbold.core.mvp_within.MvpWithin.create">
+<code class="descname">create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/core/mvp_within.html#MvpWithin.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.core.mvp_within.MvpWithin.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts (meta-)data from FEAT-directory given appropriate settings
+during initialization.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the &#8216;source&#8217;-directory doesn&#8217;t exist.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the number of loaded contrasts does not equal the number of
+extracted labels.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="skbold.estimators.html" class="btn btn-neutral float-right" title="skbold.estimators package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="skbold.core.mvp_between.html" class="btn btn-neutral" title="skbold.core.mvp_between module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Lukas Snoek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

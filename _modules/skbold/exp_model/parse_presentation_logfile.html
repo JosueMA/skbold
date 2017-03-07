@@ -1,0 +1,518 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skbold.exp_model.parse_presentation_logfile &mdash; skbold 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="skbold 0.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> skbold
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README_link.html">skbold - utilities and tools for machine learning on BOLD-fMRI data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/skbold.html">skbold package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">skbold</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>skbold.exp_model.parse_presentation_logfile</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for skbold.exp_model.parse_presentation_logfile</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Parses a Presentation (neurobs.com) logfile.</span>
+
+<span class="c1"># Author: Lukas Snoek [lukassnoek.github.io]</span>
+<span class="c1"># Contact: lukassnoek@gmail.com</span>
+<span class="c1"># License: 3 clause BSD</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">range</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">op</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+
+
+<div class="viewcode-block" id="PresentationLogfileCrawler"><a class="viewcode-back" href="../../../source/skbold.exp_model.parse_presentation_logfile.html#skbold.exp_model.PresentationLogfileCrawler">[docs]</a><span class="k">class</span> <span class="nc">PresentationLogfileCrawler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Logfile crawler for Presentation (Neurobs) files; cleans logfile,</span>
+<span class="sd">    calculates event onsets and durations, and (optionally) writes out</span>
+<span class="sd">    .bfsl files per condition.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_file : str or list</span>
+<span class="sd">        Absolute path to logfile (can be a list of paths).</span>
+<span class="sd">    con_names : list</span>
+<span class="sd">        List with names for each condition</span>
+<span class="sd">    con_codes : list</span>
+<span class="sd">        List with codes for conditions. Can be a single integer or string (in</span>
+<span class="sd">        the latter case, it may be a substring) or a list with possible values.</span>
+<span class="sd">    con_design : list or str</span>
+<span class="sd">        Which &#39;design&#39; to assume for events (if &#39;multivar&#39;, all events -</span>
+<span class="sd">        regardless of condition - are treated as a separate</span>
+<span class="sd">        condition/regressor; if &#39;univar&#39;, all events from a single condition</span>
+<span class="sd">        are treated as a single condition). Default: &#39;univar&#39; for all</span>
+<span class="sd">        conditions.</span>
+<span class="sd">    con_duration : list</span>
+<span class="sd">        If the duration cannot be parsed from the logfile, you can specify them</span>
+<span class="sd">        here manually (per condition).</span>
+<span class="sd">    pulsecode : int</span>
+<span class="sd">        Code with which the first (or any) pulse is logged.</span>
+<span class="sd">    write_bfsl : bool</span>
+<span class="sd">        Whether to write out a .bfsl file per condition.</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Print out intermediary output.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : Dataframe</span>
+<span class="sd">        Dataframe with cleaned and parsed logfile.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_file</span><span class="p">,</span> <span class="n">con_names</span><span class="p">,</span> <span class="n">con_codes</span><span class="p">,</span> <span class="n">con_design</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">con_duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pulsecode</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">write_bfsl</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">in_file</span> <span class="o">=</span> <span class="p">[</span><span class="n">in_file</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span> <span class="o">=</span> <span class="n">in_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">con_names</span> <span class="o">=</span> <span class="n">con_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">con_codes</span> <span class="o">=</span> <span class="n">con_codes</span>
+
+        <span class="k">if</span> <span class="n">con_duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">con_duration</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+                <span class="n">con_duration</span> <span class="o">=</span> <span class="p">[</span><span class="n">con_duration</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">con_duration</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">con_names</span><span class="p">):</span>
+                <span class="n">con_duration</span> <span class="o">*=</span> <span class="nb">len</span><span class="p">(</span><span class="n">con_names</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">con_duration</span> <span class="o">=</span> <span class="n">con_duration</span>
+
+        <span class="n">design_params</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;univar&#39;</span><span class="p">,</span> <span class="s1">&#39;multivar&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Unknown design-parameter; please choose from: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> \
+              <span class="n">design_params</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">con_design</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">con_design</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">design_params</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">con_design</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="n">design_params</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">con_design</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Unknown type for con_design; please specify list or str.&#39;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">con_design</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">con_design</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;univar&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">con_names</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">con_design</span> <span class="o">=</span> <span class="n">con_design</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pulsecode</span> <span class="o">=</span> <span class="n">pulsecode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_bfsl</span> <span class="o">=</span> <span class="n">write_bfsl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_write</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Processing </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">f</span><span class="p">)</span>
+
+        <span class="c1"># Remove existing .bfsl files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">glob</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span><span class="p">,</span> <span class="s1">&#39;*.bfsl&#39;</span><span class="p">))]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                               <span class="n">skip_blank_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Clean up unnecessary columns</span>
+        <span class="n">to_drop</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Uncertainty&#39;</span><span class="p">,</span> <span class="s1">&#39;Subject&#39;</span><span class="p">,</span> <span class="s1">&#39;Trial&#39;</span><span class="p">,</span> <span class="s1">&#39;Uncertainty.1&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;ReqTime&#39;</span><span class="p">,</span> <span class="s1">&#39;ReqDur&#39;</span><span class="p">,</span> <span class="s1">&#39;Stim Type&#39;</span><span class="p">,</span> <span class="s1">&#39;Pair Index&#39;</span><span class="p">]</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+             <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">to_drop</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+
+        <span class="c1"># Ugly hack to find pulsecode, because some numeric codes are</span>
+        <span class="c1"># written as str</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Code&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Code&#39;</span><span class="p">]]</span>
+        <span class="n">pulse_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Code&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pulsecode</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pulse_idx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># take first pulse if mult pulses are logged</span>
+            <span class="n">pulse_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pulse_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># pulse_t = absolute time of first pulse</span>
+        <span class="n">pulse_t</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">][</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Code&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pulsecode</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">pulse_t</span><span class="p">))</span> <span class="o">/</span> <span class="mf">10000.0</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Duration&#39;</span><span class="p">]</span> <span class="o">/=</span> <span class="mf">10000.0</span>
+
+        <span class="n">trial_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">trial_onsets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">trial_durations</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Loop over condition-codes to find indices/times/durations</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">code</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">con_codes</span><span class="p">):</span>
+
+            <span class="n">to_write</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="n">code</span> <span class="o">=</span> <span class="p">[</span><span class="n">code</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># Code is list of possibilities</span>
+                <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">code</span><span class="p">):</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Code&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">code</span><span class="p">):</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="p">[</span><span class="nb">any</span><span class="p">(</span><span class="n">c</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">code</span><span class="p">)</span>
+                           <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="kc">False</span>
+                           <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Code&#39;</span><span class="p">]]</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">code</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="c1"># Code is single string</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">code</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span>
+                       <span class="k">else</span> <span class="kc">False</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Code&#39;</span><span class="p">]]</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Code&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">code</span>
+
+            <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No entries found for code: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">code</span><span class="p">)</span>
+
+            <span class="c1"># Generate dataframe with time, duration, and weight given idx</span>
+            <span class="n">to_write</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">con_duration</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">to_write</span><span class="p">[</span><span class="s1">&#39;Duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Duration&#39;</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
+                <span class="n">n_nan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">to_write</span><span class="p">[</span><span class="s1">&#39;Duration&#39;</span><span class="p">]))</span>
+                <span class="k">if</span> <span class="n">n_nan</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;In total, </span><span class="si">%i</span><span class="s1"> NaNs found for Duration. &#39;</span>
+                           <span class="s1">&#39;Specify duration manually.&#39;</span> <span class="o">%</span> <span class="n">n_nan</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">to_write</span><span class="p">[</span><span class="s1">&#39;Duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+                                        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">to_write</span><span class="p">[</span><span class="s1">&#39;Duration&#39;</span><span class="p">]]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">to_write</span><span class="p">[</span><span class="s1">&#39;Duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">con_duration</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">*</span> <span class="n">idx</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+            <span class="n">to_write</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">to_write</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">con_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">sum</span><span class="p">())]</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">con_design</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;univar&#39;</span><span class="p">:</span>
+                <span class="n">trial_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_write</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+                <span class="n">trial_onsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_write</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+                <span class="n">trial_durations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_write</span><span class="p">[</span><span class="s1">&#39;Duration&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">con_design</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;multivar&#39;</span><span class="p">:</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">trial_names</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">x</span><span class="p">])</span>
+                     <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">to_write</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">trial_onsets</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">x</span><span class="p">])</span>
+                     <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">to_write</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">trial_durations</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">x</span><span class="p">])</span>
+                     <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">to_write</span><span class="p">[</span><span class="s1">&#39;Duration&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">to_write</span> <span class="o">=</span> <span class="n">to_write</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_bfsl</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_write_bfsl</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="n">subject_info</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;conditions&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">con_names</span><span class="p">,</span>
+                        <span class="s1">&#39;onsets&#39;</span><span class="p">:</span> <span class="n">trial_onsets</span><span class="p">,</span>
+                        <span class="s1">&#39;durations&#39;</span><span class="p">:</span> <span class="n">trial_durations</span><span class="p">,</span>
+                        <span class="s1">&#39;amplitudes&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="s1">&#39;regressor_names&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">con_names</span><span class="p">,</span>
+                        <span class="s1">&#39;regressors&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+        <span class="c1"># For nipype: convert subject-info to Bunch instance.</span>
+
+        <span class="k">return</span> <span class="n">subject_info</span>
+
+    <span class="k">def</span> <span class="nf">_write_bfsl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+
+        <span class="n">to_write</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_write</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">con_design</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;univar&#39;</span><span class="p">:</span>
+            <span class="n">to_write</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.bfsl&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">con_names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">to_write</span> <span class="o">=</span> <span class="n">to_write</span><span class="p">[[</span><span class="s1">&#39;Time&#39;</span><span class="p">,</span> <span class="s1">&#39;Duration&#39;</span><span class="p">,</span> <span class="s1">&#39;Weight&#39;</span><span class="p">]]</span>
+            <span class="n">to_write</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">con_design</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;multivar&#39;</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">to_write</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
+                <span class="n">ev_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.bfsl&#39;</span> <span class="o">%</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span><span class="p">,</span> <span class="n">ev_name</span><span class="p">)</span>
+                <span class="n">df_tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;Time&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">],</span>
+                                       <span class="s1">&#39;Duration&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Duration&#39;</span><span class="p">],</span>
+                                       <span class="s1">&#39;Weight&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]},</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">df_tmp</span> <span class="o">=</span> <span class="n">df_tmp</span><span class="p">[[</span><span class="s1">&#39;Time&#39;</span><span class="p">,</span> <span class="s1">&#39;Duration&#39;</span><span class="p">,</span> <span class="s1">&#39;Weight&#39;</span><span class="p">]]</span>
+                <span class="n">df_tmp</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PresentationLogfileCrawler.parse"><a class="viewcode-back" href="../../../source/skbold.exp_model.parse_presentation_logfile.html#skbold.exp_model.PresentationLogfileCrawler.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parses logfile, writes bfsl (optional), and return subject-info.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        subject_info_list : Nilearn bunch object</span>
+<span class="sd">            Bunch object to be used in Nipype pipelines.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">subject_info_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_file</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subject_info_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">subject_info_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">subject_info_list</span></div></div>
+
+
+<div class="viewcode-block" id="parse_presentation_logfile"><a class="viewcode-back" href="../../../source/skbold.exp_model.parse_presentation_logfile.html#skbold.exp_model.parse_presentation_logfile">[docs]</a><span class="k">def</span> <span class="nf">parse_presentation_logfile</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">con_names</span><span class="p">,</span> <span class="n">con_codes</span><span class="p">,</span> <span class="n">con_design</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                               <span class="n">con_duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pulsecode</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function-interface for PresentationLogfileCrawler. Can be used to create</span>
+<span class="sd">    a Nipype node.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_file : str or list</span>
+<span class="sd">        Absolute path to logfile (can be a list of paths).</span>
+<span class="sd">    con_names : list</span>
+<span class="sd">        List with names for each condition</span>
+<span class="sd">    con_codes : list</span>
+<span class="sd">        List with codes for conditions. Can be a single integer or string (in</span>
+<span class="sd">        the latter case, it may be a substring) or a list with possible values.</span>
+<span class="sd">    con_design : list or str</span>
+<span class="sd">        Which &#39;design&#39; to assume for events (if &#39;multivar&#39;, all events -</span>
+<span class="sd">        regardless of condition - are treated as a separate</span>
+<span class="sd">        condition/regressor; if &#39;univar&#39;, all events from a single condition</span>
+<span class="sd">        are treated as a single condition). Default: &#39;univar&#39; for all</span>
+<span class="sd">        conditions.</span>
+<span class="sd">    con_duration : list</span>
+<span class="sd">        If the duration cannot be parsed from the logfile, you can specify them</span>
+<span class="sd">        here manually (per condition).</span>
+<span class="sd">    pulsecode : int</span>
+<span class="sd">        Code with which the first (or any) pulse is logged.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">skbold.exp_model</span> <span class="k">import</span> <span class="n">PresentationLogfileCrawler</span>
+
+    <span class="n">plc</span> <span class="o">=</span> <span class="n">PresentationLogfileCrawler</span><span class="p">(</span><span class="n">in_file</span><span class="o">=</span><span class="n">in_file</span><span class="p">,</span> <span class="n">con_names</span><span class="o">=</span><span class="n">con_names</span><span class="p">,</span>
+                                     <span class="n">con_codes</span><span class="o">=</span><span class="n">con_codes</span><span class="p">,</span>
+                                     <span class="n">con_design</span><span class="o">=</span><span class="n">con_design</span><span class="p">,</span>
+                                     <span class="n">con_duration</span><span class="o">=</span><span class="n">con_duration</span><span class="p">,</span>
+                                     <span class="n">pulsecode</span><span class="o">=</span><span class="n">pulsecode</span><span class="p">,</span> <span class="n">write_bfsl</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">subject_info_files</span> <span class="o">=</span> <span class="n">plc</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">subject_info_files</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Lukas Snoek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

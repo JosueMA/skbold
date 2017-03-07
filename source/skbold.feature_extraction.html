@@ -1,0 +1,699 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skbold.feature_extraction package &mdash; skbold 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="skbold 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="skbold package" href="skbold.html"/>
+        <link rel="next" title="skbold.feature_extraction.transformers module" href="skbold.feature_extraction.transformers.html"/>
+        <link rel="prev" title="skbold.exp_model.parse_presentation_logfile module" href="skbold.exp_model.parse_presentation_logfile.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> skbold
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../README_link.html">skbold - utilities and tools for machine learning on BOLD-fMRI data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="skbold.html">skbold package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="skbold.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="skbold.core.html">skbold.core package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.estimators.html">skbold.estimators package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.exp_model.html">skbold.exp_model package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">skbold.feature_extraction package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.feature_selection.html">skbold.feature_selection package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.pipelines.html">skbold.pipelines package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.postproc.html">skbold.postproc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.preproc.html">skbold.preproc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="skbold.utils.html">skbold.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">skbold</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="skbold.html">skbold package</a> &raquo;</li>
+        
+      <li>skbold.feature_extraction package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/skbold.feature_extraction.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-skbold.feature_extraction">
+<span id="skbold-feature-extraction-package"></span><h1>skbold.feature_extraction package<a class="headerlink" href="#module-skbold.feature_extraction" title="Permalink to this headline">¶</a></h1>
+<p>Description.</p>
+<dl class="class">
+<dt id="skbold.feature_extraction.PatternAverager">
+<em class="property">class </em><code class="descname">PatternAverager</code><span class="sig-paren">(</span><em>method='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#PatternAverager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.PatternAverager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<p>Reduces the set of features to its average.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>method</strong> (<em>str</em>) &#8211; method of averaging (either &#8216;mean&#8217; or &#8216;median&#8217;)</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skbold.feature_extraction.PatternAverager.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#PatternAverager.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.PatternAverager.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does nothing, but included to be used in sklearn&#8217;s Pipeline.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.feature_extraction.PatternAverager.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#PatternAverager.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.PatternAverager.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms patterns to its average.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>ndarray</em>) &#8211; Numeric (float) array of shape = [n_samples, n_features]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>X_new</strong> &#8211; Transformed ndarray of shape = [n_samples, 1]</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.feature_extraction.ArrayPermuter">
+<em class="property">class </em><code class="descname">ArrayPermuter</code><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#ArrayPermuter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.ArrayPermuter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<p>Permutes (shuffles) rows of matrix.</p>
+<p>Initializes ArrayPermuter object.</p>
+<dl class="method">
+<dt id="skbold.feature_extraction.ArrayPermuter.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#ArrayPermuter.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.ArrayPermuter.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does nothing, but included to be used in sklearn&#8217;s Pipeline.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.feature_extraction.ArrayPermuter.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#ArrayPermuter.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.ArrayPermuter.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Permutes rows of data input.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>ndarray</em>) &#8211; Numeric (float) array of shape = [n_samples, n_features]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>X_new</strong> &#8211; ndarray with permuted rows</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.feature_extraction.AverageRegionTransformer">
+<em class="property">class </em><code class="descname">AverageRegionTransformer</code><span class="sig-paren">(</span><em>mvp</em>, <em>mask_type='unilateral'</em>, <em>mask_threshold=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#AverageRegionTransformer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.AverageRegionTransformer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<p>Transforms a whole-brain voxel pattern into a region-average pattern
+Computes the average from different regions from a given parcellation
+and returns those as features for X.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mask_type</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em></em>) &#8211; List with absolute paths to nifti-images of brain masks in
+MNI152 (2mm) space.</li>
+<li><strong>mvp</strong> (<em>Mvp-object</em><em> (</em><em>see core.mvp</em><em>)</em><em></em>) &#8211; Mvp object that provides some metadata about previous masks</li>
+<li><strong>mask_threshold</strong> (<em>int</em><em> (</em><em>default: 0</em><em>)</em><em></em>) &#8211; Minimum threshold for probabilistic masks (such as Harvard-Oxford)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skbold.feature_extraction.AverageRegionTransformer.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#AverageRegionTransformer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.AverageRegionTransformer.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does nothing, but included to be used in sklearn&#8217;s Pipeline.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.feature_extraction.AverageRegionTransformer.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#AverageRegionTransformer.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.AverageRegionTransformer.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms features from X (voxels) to region-average features.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>ndarray</em>) &#8211; Numeric (float) array of shape = [n_samples, n_features]</li>
+<li><strong>y</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>] or </em><em>numpy ndarray</em><em>[</em><em>str</em><em>]</em><em></em><em>]</em><em></em>) &#8211; List of ndarray with strings indicating label-names</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>X_new</strong> &#8211; array with transformed data of shape = [n_samples, n_features]
+in which features are region-average values.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.feature_extraction.PCAfilter">
+<em class="property">class </em><code class="descname">PCAfilter</code><span class="sig-paren">(</span><em>n_components=5</em>, <em>reject=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#PCAfilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.PCAfilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<p>Filters out a (set of) PCA component(s) and transforms it back to original
+representation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n_components</strong> (<em>int</em>) &#8211; number of components to retain.</li>
+<li><strong>reject</strong> (<em>list</em>) &#8211; Indices of components which should be additionally removed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><p class="first last"><strong>pca</strong> (<em>scikit-learn PCA object</em>) &#8211; Fitted PCA object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skbold.feature_extraction.PCAfilter.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#PCAfilter.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.PCAfilter.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits PcaFilter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>X</strong> (<em>ndarray</em>) &#8211; Numeric (float) array of shape = [n_samples, n_features]</li>
+<li><strong>y</strong> (<em>List of str</em>) &#8211; List or ndarray with floats corresponding to labels</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.feature_extraction.PCAfilter.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#PCAfilter.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.PCAfilter.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a pattern (X) by the inverse PCA transform with removed
+components.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>ndarray</em>) &#8211; Numeric (float) array of shape = [n_samples, n_features]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>X</strong> &#8211; Transformed array of shape = [n_samples, n_features] given the
+PCA calculated during fit().</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.feature_extraction.RoiIndexer">
+<em class="property">class </em><code class="descname">RoiIndexer</code><span class="sig-paren">(</span><em>mvp</em>, <em>mask</em>, <em>mask_threshold=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#RoiIndexer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.RoiIndexer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<p>Indexes a whole-brain pattern with a certain ROI.
+Given a certain ROI-mask, this class allows transformation
+from a whole-brain pattern to the mask-subset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mvp</strong> (<em>mvp-object</em><em> (</em><em>see scikit_bold.core</em><em>)</em><em></em>) &#8211; Mvp-object, necessary to extract some pattern metadata</li>
+<li><strong>mask</strong> (<em>str</em>) &#8211; Absolute paths to nifti-images of brain masks in MNI152 space.</li>
+<li><strong>mask_threshold</strong> (<em>Optional</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em><em></em>) &#8211; Threshold to be applied on mask-indexing (given a probabilistic
+mask).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skbold.feature_extraction.RoiIndexer.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#RoiIndexer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.RoiIndexer.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits RoiIndexer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>X</strong> (<em>ndarray</em>) &#8211; Numeric (float) array of shape = [n_samples, n_features]</li>
+<li><strong>y</strong> (<em>List of str</em>) &#8211; List or ndarray with floats corresponding to labels</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.feature_extraction.RoiIndexer.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#RoiIndexer.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.RoiIndexer.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms features from X (voxels) to a mask-subset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>ndarray</em>) &#8211; Numeric (float) array of shape = [n_samples, n_features]</li>
+<li><strong>y</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>] or </em><em>numpy ndarray</em><em>[</em><em>str</em><em>]</em><em></em><em>]</em><em></em>) &#8211; List of ndarray with strings indicating label-names</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>X_new</strong> &#8211; array with transformed data of shape = [n_samples, n_features]
+in which features are region-average values.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.feature_extraction.RowIndexer">
+<em class="property">class </em><code class="descname">RowIndexer</code><span class="sig-paren">(</span><em>mvp</em>, <em>train_idx</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#RowIndexer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.RowIndexer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Selects a subset of rows from an Mvp object.</p>
+<p class="rubric">Notes</p>
+<p>NOT a scikit-learn style transformer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>idx</strong> (<em>ndarray</em>) &#8211; Array with indices.</li>
+<li><strong>mvp</strong> (<em>mvp-object</em>) &#8211; Mvp-object to drawn metadata from.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skbold.feature_extraction.RowIndexer.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#RowIndexer.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.RowIndexer.transform" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>mvp</strong> (<em>mvp-object</em>) &#8211; Indexed mvp-object.</li>
+<li><strong>X_not_selected</strong> (<em>ndarray</em>) &#8211; Data which has not been selected.</li>
+<li><strong>y_not_selected</strong> (<em>ndarray</em>) &#8211; Labels which have not been selected.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.feature_extraction.ClusterThreshold">
+<em class="property">class </em><code class="descname">ClusterThreshold</code><span class="sig-paren">(</span><em>mvp</em>, <em>min_score</em>, <em>selector=&lt;function f_classif&gt;</em>, <em>min_cluster_size=20</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#ClusterThreshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.ClusterThreshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<p>Implements a cluster-based feature selection method.
+This feature selection method performs a univariate feature selection
+method to yield a set of voxels which are then cluster-thresholded using
+a minimum (contiguous) cluster size. These clusters are then averaged to
+yield a set of cluster-average features. This method is described in detail
+in my master&#8217;s thesis: github.com/lukassnoek/MSc_thesis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>transformer</strong> (<em>scikit-learn style transformer class</em>) &#8211; transformer class used to perform some kind of univariate feature
+selection.</li>
+<li><strong>mvp</strong> (<em>Mvp-object</em><em> (</em><em>see core.mvp</em><em>)</em><em></em>) &#8211; Necessary to provide mask metadata (index, shape).</li>
+<li><strong>min_cluster_size</strong> (<em>int</em>) &#8211; minimum cluster size to be set for cluster-thresholding</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skbold.feature_extraction.ClusterThreshold.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#ClusterThreshold.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.ClusterThreshold.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits ClusterThreshold transformer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>X</strong> (<em>ndarray</em>) &#8211; Numeric (float) array of shape = [n_samples, n_features]</li>
+<li><strong>y</strong> (<em>List</em><em>[</em><em>str</em><em>] or </em><em>numpy ndarray</em><em>[</em><em>str</em><em>]</em><em></em>) &#8211; List of ndarray with floats corresponding to labels</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.feature_extraction.ClusterThreshold.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#ClusterThreshold.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.ClusterThreshold.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a pattern (X) given the indices calculated during fit().</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>ndarray</em>) &#8211; Numeric (float) array of shape = [n_samples, n_features]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>X_cl</strong> &#8211; Transformed array of shape = [n_samples, n_clusters] given the
+indices calculated during fit().</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.feature_extraction.SelectFeatureset">
+<em class="property">class </em><code class="descname">SelectFeatureset</code><span class="sig-paren">(</span><em>mvp</em>, <em>featureset_idx</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#SelectFeatureset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.SelectFeatureset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<p>Selects only columns of a certain featureset.
+CANNOT be used in a scikit-learn pipeline!</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mvp</strong> (<em>mvp-object</em>) &#8211; Used to extract meta-data.</li>
+<li><strong>featureset_idx</strong> (<em>ndarray</em>) &#8211; Array with indices which map to unique feature-set voxels.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skbold.feature_extraction.SelectFeatureset.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#SelectFeatureset.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.SelectFeatureset.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does nothing, but included due to scikit-learn API.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.feature_extraction.SelectFeatureset.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#SelectFeatureset.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.SelectFeatureset.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms mvp.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="skbold.feature_extraction.IncrementalFeatureCombiner">
+<em class="property">class </em><code class="descname">IncrementalFeatureCombiner</code><span class="sig-paren">(</span><em>scores</em>, <em>cutoff</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#IncrementalFeatureCombiner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.IncrementalFeatureCombiner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<p>Indexes a set of features with a number of (sorted) features.
+:param scores: Array of shape = n_features, or [n_features, n_class] in case of</p>
+<blockquote>
+<div>soft/hard voting in, e.g., a roi_stacking_classifier
+(see classifiers.roi_stacking_classifier).</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cutoff</strong> (<em>int</em><em> or </em><em>float</em>) &#8211; If int, it refers the absolute number of features included, sorted
+from high to low (w.r.t. scores). If float, it selects a proportion
+of features.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skbold.feature_extraction.IncrementalFeatureCombiner.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#IncrementalFeatureCombiner.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.IncrementalFeatureCombiner.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits IncrementalFeatureCombiner transformer.
+:param X: Numeric (float) array of shape = [n_samples, n_features]
+:type X: ndarray</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skbold.feature_extraction.IncrementalFeatureCombiner.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/skbold/feature_extraction/transformers.html#IncrementalFeatureCombiner.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skbold.feature_extraction.IncrementalFeatureCombiner.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a pattern (X) given the indices calculated during fit().
+:param X: Numeric (float) array of shape = [n_samples, n_features]
+:type X: ndarray</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>X</strong> &#8211; Transformed array of shape = [n_samples, n_features] given the
+indices calculated during fit().</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="skbold.feature_extraction.transformers.html">skbold.feature_extraction.transformers module</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="skbold.feature_extraction.transformers.html" class="btn btn-neutral float-right" title="skbold.feature_extraction.transformers module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="skbold.exp_model.parse_presentation_logfile.html" class="btn btn-neutral" title="skbold.exp_model.parse_presentation_logfile module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Lukas Snoek.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
